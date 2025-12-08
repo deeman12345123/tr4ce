@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr4ces Treatz | Premium Lolly Market | Horsham</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Tr4ces Treatz | Traditional Lolly Market Stall | Horsham & Western Victoria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Libre+Baskerville:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #D32F2F; /* Candy Red */
-            --secondary: #F4E1D2; /* Vintage Cream */
-            --accent: #FFD700; /* Gold */
-            --dark: #2C1810; /* Dark Chocolate */
-            --white: #ffffff;
-            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --vintage-red: #C41E3A;
+            --cream: #FFF8E7;
+            --dark-brown: #3E2723;
+            --gold: #D4AF37;
+            --soft-pink: #FFE4E1;
+            --stripe-color: #8B4513;
+            --black: #1a1a1a;
         }
 
         * {
@@ -23,559 +24,743 @@
 
         body {
             font-family: 'Lato', sans-serif;
-            background-color: var(--secondary);
-            color: var(--dark);
-            line-height: 1.6;
+            background: var(--cream);
+            color: var(--dark-brown);
+            line-height: 1.7;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-        }
-
-        /* --- 3D Awning Effect --- */
+        /* Striped awning pattern */
         .awning {
-            height: 60px;
+            height: 80px;
             background: repeating-linear-gradient(
                 90deg,
-                var(--primary) 0px,
-                var(--primary) 40px,
-                var(--white) 40px,
-                var(--white) 80px
+                var(--vintage-red) 0px,
+                var(--vintage-red) 40px,
+                white 40px,
+                white 80px
             );
-            border-bottom: 8px solid rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--dark-brown);
             position: relative;
-            z-index: 1001;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .awning::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -20px;
             left: 0;
-            width: 100%;
-            height: 15px;
-            background: radial-gradient(circle at 20px 0, transparent 20px, var(--white) 21px); /* Scalloped edge fix */
-            background-size: 40px 20px;
-            background-repeat: repeat-x;
-            transform: rotate(180deg);
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                var(--dark-brown) 38px,
+                var(--dark-brown) 42px,
+                transparent 42px,
+                transparent 80px
+            );
         }
 
-        /* --- Navigation --- */
+        /* Header */
+        header {
+            background: white;
+            padding: 2rem 5%;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo-container {
+            max-width: 400px;
+            margin: 0 auto 1rem;
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .header-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--vintage-red);
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
+        /* Navigation */
         nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--dark-brown);
             padding: 1rem 5%;
             position: sticky;
             top: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            letter-spacing: 1px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            justify-content: center;
+            gap: 3rem;
             list-style: none;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
+            color: var(--cream);
             text-decoration: none;
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            padding: 8rem 5% 6rem;
-            text-align: center;
-            background: radial-gradient(circle at center, #fff5e6 0%, var(--secondary) 100%);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
+            padding: 0.5rem 0;
         }
 
-        /* Animated floating candy background */
-        .hero::before {
-            content: '🍬 🍭 🍫';
+        .nav-links a::after {
+            content: '';
             position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--soft-pink) 0%, var(--cream) 100%);
+            padding: 5rem 5%;
+            text-align: center;
+            position: relative;
+            border-bottom: 3px solid var(--vintage-red);
+        }
+
+        .hero::before {
+            content: '🍬';
+            position: absolute;
             font-size: 8rem;
             opacity: 0.05;
-            white-space: nowrap;
-            animation: float 6s ease-in-out infinite;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%) rotate(-15deg);
         }
 
-        @keyframes float {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, -20px); }
+        .hero::after {
+            content: '🍭';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%) rotate(15deg);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vintage-badge {
+            display: inline-block;
+            background: var(--vintage-red);
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.3);
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 6vw, 5rem);
-            color: var(--primary);
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: var(--dark-brown);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero .location {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.4rem;
+            color: var(--vintage-red);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            max-width: 600px;
+            font-size: 1.2rem;
+            color: var(--dark-brown);
+            max-width: 700px;
             margin: 0 auto 2.5rem;
+            line-height: 1.8;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 700;
-            transition: all 0.3s;
-            border: 2px solid var(--primary);
-            cursor: pointer;
+        /* Decorative divider */
+        .divider {
+            text-align: center;
+            margin: 3rem 0;
+            font-size: 2rem;
+            color: var(--vintage-red);
         }
 
-        .btn:hover {
-            background: transparent;
-            color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
-        }
-
-        .btn.secondary {
-            background: transparent;
-            color: var(--dark);
-            border-color: var(--dark);
-            margin-left: 1rem;
-        }
-
-        .btn.secondary:hover {
-            background: var(--dark);
-            color: white;
-        }
-
-        /* --- Filter Section (New Feature) --- */
+        /* Filter Buttons (New) */
         .filter-container {
             text-align: center;
-            padding: 4rem 5% 0;
-            background: white;
+            margin-bottom: 2rem;
         }
 
         .filter-btn {
-            background: none;
-            border: 2px solid #ddd;
+            background: transparent;
+            border: 2px solid var(--vintage-red);
+            color: var(--vintage-red);
             padding: 0.5rem 1.5rem;
-            border-radius: 25px;
-            margin: 0.5rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.9rem;
             cursor: pointer;
-            font-family: 'Lato', sans-serif;
-            font-weight: 700;
-            transition: all 0.3s;
+            border-radius: 20px;
+            margin: 0 0.5rem 0.5rem;
+            transition: all 0.3s ease;
         }
 
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary);
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--vintage-red);
             color: white;
-            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(196, 30, 58, 0.2);
         }
 
-        /* --- Products Grid --- */
-        .products {
-            padding: 2rem 5% 6rem;
-            background: white;
+        /* Products Grid */
+        .products { padding: 4rem 0 5%; max-width: 1400px; margin: 0 auto; }
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--dark-brown);
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-family: 'Libre Baskerville', serif;
+            color: var(--vintage-red);
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2.5rem;
+            margin-top: 2rem;
+            padding: 0 5%;
         }
 
         .product-card {
-            background: var(--white);
-            border-radius: 15px;
+            background: white;
+            border: 3px solid var(--vintage-red);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s;
-            border: 1px solid #eee;
-            position: relative;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) rotate(-1deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .product-img-container {
-            height: 200px;
-            background: #f9f9f9;
+        .product-image {
+            height: 220px;
+            background: linear-gradient(135deg, var(--soft-pink), var(--cream));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 5rem;
-            border-bottom: 4px solid var(--primary);
+            border-bottom: 3px solid var(--vintage-red);
+            position: relative;
         }
 
-        .product-details {
-            padding: 1.5rem;
-            text-align: center;
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--vintage-red) 0px,
+                var(--vintage-red) 20px,
+                white 20px,
+                white 40px
+            );
         }
 
-        .tag {
-            background: var(--accent);
-            color: var(--dark);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.7rem;
+        .product-info { padding: 2rem; }
+        
+        .product-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark-brown);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 0.5rem;
-        }
-
-        .price {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--primary);
-            font-weight: 700;
-            margin-top: 0.5rem;
-            display: block;
-        }
-
-        /* --- Sponsors / Info Section --- */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 0;
-        }
-
-        .info-box {
-            padding: 4rem 3rem;
-            text-align: center;
-        }
-
-        .info-box.dark {
-            background: var(--dark);
-            color: var(--secondary);
-        }
-
-        .info-box.light {
-            background: var(--primary);
-            color: white;
-        }
-
-        .info-box h3 {
-            font-size: 2rem;
             margin-bottom: 1rem;
+            letter-spacing: 1px;
         }
 
-        /* --- Contact Form (New Feature) --- */
-        .contact-section {
-            padding: 6rem 5%;
-            background: var(--secondary);
-            text-align: center;
+        .product-name {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.6rem;
+            color: var(--dark-brown);
+            margin-bottom: 0.8rem;
         }
 
-        .form-container {
-            max-width: 600px;
-            margin: 3rem auto 0;
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .form-group {
+        .product-description {
+            color: #666;
+            font-size: 0.95rem;
             margin-bottom: 1.5rem;
-            text-align: left;
+            line-height: 1.6;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        .product-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
             font-weight: 700;
-            font-size: 0.9rem;
+            color: var(--vintage-red);
         }
 
-        .form-control {
+        /* Form Styling (New) */
+        .contact-form-container {
+            background: white;
+            border: 3px solid var(--dark-brown);
+            border-radius: 15px;
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-label {
+            display: block;
+            font-family: 'Libre Baskerville', serif;
+            margin-bottom: 0.5rem;
+            color: var(--vintage-red);
+        }
+        .form-input {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
+            border: 2px solid var(--cream);
+            background: var(--cream);
+            border-radius: 10px;
             font-family: 'Lato', sans-serif;
-            transition: border-color 0.3s;
+            font-size: 1rem;
+            color: var(--dark-brown);
+            transition: all 0.3s;
         }
-
-        .form-control:focus {
+        .form-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--vintage-red);
+            background: white;
         }
 
-        textarea.form-control {
-            height: 150px;
-            resize: none;
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
         }
 
-        /* --- Footer --- */
+        .btn-primary {
+            background: var(--vintage-red);
+            color: white;
+            border: 3px solid var(--vintage-red);
+        }
+
+        .btn-primary:hover {
+            background: white;
+            color: var(--vintage-red);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(196, 30, 58, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--dark-brown);
+            border: 3px solid var(--dark-brown);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-brown);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        /* Footer */
         footer {
-            background: #1a1a1a;
-            color: #888;
+            background: var(--dark-brown);
+            color: var(--cream);
             padding: 3rem 5%;
             text-align: center;
-            border-top: 5px solid var(--primary);
+            margin-top: 4rem;
+            border-top: 5px solid var(--vintage-red);
+        }
+        .footer-logo { max-width: 250px; margin: 0 auto 1.5rem; }
+        .footer-logo img { width: 100%; filter: brightness(0) invert(1); }
+        .footer-divider {
+            width: 100px; height: 2px; background: var(--gold); margin: 1.5rem auto;
         }
 
-        .social-icons {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .social-icons a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .social-icons a:hover {
-            color: var(--accent);
-        }
-
-        /* --- Mobile Responsiveness --- */
-        .menu-btn {
+        /* Mobile Menu */
+        .menu-toggle {
             display: none;
-            font-size: 1.5rem;
             background: none;
             border: none;
+            color: var(--cream);
+            font-size: 2rem;
             cursor: pointer;
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
                 flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: white;
-                padding: 2rem;
-                box-shadow: 0 10px 10px rgba(0,0,0,0.05);
-                text-align: center;
+                gap: 1rem;
+                padding: 2rem 0;
             }
             .nav-links.active { display: flex; }
-            .menu-btn { display: block; }
-            .hero h1 { font-size: 2.5rem; }
-            .btn { width: 100%; margin: 0.5rem 0; }
+            .menu-toggle { display: block; }
+            .hero h1 { font-size: 2rem; }
+            .cta-group { flex-direction: column; }
+            .btn { width: 100%; }
         }
+        
+        /* Contact Section */
+        .contact { padding: 4rem 0 0; }
+        .contact-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+             gap: 2rem;
+             margin: 3rem 5%;
+        }
+        .contact-card {
+            background: white;
+            border: 3px solid var(--dark-brown);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--vintage-red);
+        }
+        .contact-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .contact-card h3 {
+             font-family: 'Libre Baskerville', serif;
+             font-size: 1.3rem;
+             color: var(--vintage-red);
+             margin-bottom: 0.8rem;
+        }
+
     </style>
 </head>
 <body>
-
     <div class="awning"></div>
 
+    <header>
+        <div class="logo-container">
+            <h1 style="font-family: 'Cormorant Garamond'; color: var(--vintage-red); font-size: 3rem; margin: 0;">Tr4ces Treatz</h1>
+        </div>
+        <p class="header-tagline">Traditional, Rare & Hard-to-Find Confectionery</p>
+    </header>
+
     <nav>
-        <a href="#" class="nav-logo">TR4CES TREATZ</a>
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
         <ul class="nav-links" id="navLinks">
             <li><a href="#home">Home</a></li>
-            <li><a href="#products">Lollies</a></li>
-            <li><a href="#partner">Partnerships</a></li>
+            <li><a href="#locations">Market Locations</a></li>
+            <li><a href="#products">Our Lollies</a></li>
+            <li><a href="#book">Partner With Us</a></li>
+            <li><a href="#about">About Us</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
     <section class="hero" id="home">
-        <div class="vintage-badge" style="color: var(--primary); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">Est. 2024 • Horsham VIC</div>
-        <h1>Rare & Traditional Confectionery</h1>
-        <p>From nostalgic Australian classics to exclusive international imports. We bring the sweetness to Western Victoria's best markets.</p>
-        <a href="#products" class="btn">View The Lollies</a>
-        <a href="#partner" class="btn secondary">Book Our Stall</a>
-    </section>
-
-    <section class="filter-container" id="products">
-        <button class="filter-btn active" onclick="filterSelection('all')">All Treats</button>
-        <button class="filter-btn" onclick="filterSelection('classic')">Classics</button>
-        <button class="filter-btn" onclick="filterSelection('sour')">Sour/Fizzy</button>
-        <button class="filter-btn" onclick="filterSelection('choco')">Chocolates</button>
-        <button class="filter-btn" onclick="filterSelection('rare')">Rare Finds</button>
-    </section>
-
-    <section class="products">
-        <div class="product-card filter-item classic">
-            <div class="product-img-container">🚂</div>
-            <div class="product-details">
-                <span class="tag">Classic</span>
-                <h3>Choo Choo Bars</h3>
-                <p>Chewy licorice toffee. An Aussie icon.</p>
-                <span class="price">$3.50</span>
-            </div>
-        </div>
-
-        <div class="product-card filter-item choco">
-            <div class="product-img-container">🍬</div>
-            <div class="product-details">
-                <span class="tag">Bestseller</span>
-                <h3>Jersey Caramels</h3>
-                <p>Soft, creamy, melt-in-your-mouth.</p>
-                <span class="price">$4.00</span>
-            </div>
-        </div>
-
-        <div class="product-card filter-item sour">
-            <div class="product-img-container">💣</div>
-            <div class="product-details">
-                <span class="tag">Fizzy</span>
-                <h3>Sherbet Bombs</h3>
-                <p>Tangy fruit exterior, explosive fizzy center.</p>
-                <span class="price">$4.50</span>
-            </div>
-        </div>
-
-        <div class="product-card filter-item rare">
-            <div class="product-img-container">🇬🇧</div>
-            <div class="product-details">
-                <span class="tag">Import</span>
-                <h3>UK Bonbons</h3>
-                <p>Traditional dusted strawberry bonbons.</p>
-                <span class="price">$6.00</span>
-            </div>
-        </div>
-
-        <div class="product-card filter-item classic">
-            <div class="product-img-container">🦷</div>
-            <div class="product-details">
-                <span class="tag">Novelty</span>
-                <h3>Teeth Lollies</h3>
-                <p>Classic minty/vanilla teeth shape.</p>
-                <span class="price">$3.00</span>
-            </div>
-        </div>
-
-        <div class="product-card filter-item rare">
-            <div class="product-img-container">🕵️</div>
-            <div class="product-details">
-                <span class="tag">Limited</span>
-                <h3>Mystery Bag</h3>
-                <p>A curated selection of our rarest finds.</p>
-                <span class="price">$15.00</span>
+        <div class="hero-content">
+            <div class="vintage-badge">Est. 2024 • Pop-Up Market Stall</div>
+            <h1>Welcome to Tr4ces Treatz</h1>
+            <p class="location">📍 Horsham & Western Victoria, Australia</p>
+            <p>
+                Step back in time at our charming pop-up lolly stall! We bring you traditional confectionery, 
+                classic sweets, and <strong>rare, hard-to-find treats</strong> at your local markets. From nostalgic 
+                Australian favourites to exclusive imported lollies you won't find anywhere else.
+            </p>
+            <div class="cta-group">
+                <a href="#locations" class="btn btn-primary">Find Our Stall</a>
+                <a href="#products" class="btn btn-secondary">Browse Lollies</a>
             </div>
         </div>
     </section>
 
-    <section class="info-grid" id="partner">
-        <div class="info-box dark">
-            <h3>Find Our Stall</h3>
-            <p><strong>Horsham Market</strong><br>Every Saturday, 8am - 1pm<br>Firebrace Street</p>
-            <p style="margin-top: 2rem;">We pop up at festivals and fairs across Western Victoria.</p>
-        </div>
-        <div class="info-box light">
-            <h3>Partner With Us</h3>
-            <p>Want Tr4ces Treatz at your event, school fete, or business pop-up?</p>
-            <ul style="list-style: none; margin: 1.5rem 0;">
-                <li>✓ Vintage Stall Setup</li>
-                <li>✓ Crowd Magnet</li>
-                <li>✓ Fundraising Options</li>
-            </ul>
-            <a href="#contact" style="color: white; font-weight: bold; text-decoration: underline;">Enquire Now</a>
-        </div>
-    </section>
+    <main>
+        <div class="divider">❦ ❦ ❦</div>
 
-    <section class="contact-section" id="contact">
-        <h2 style="font-size: 2.5rem; color: var(--primary);">Get In Touch</h2>
-        <p>Looking for a specific lolly? Want to book us?</p>
-        
-        <div class="form-container">
-            <form action="mailto:your-email@example.com" method="post" enctype="text/plain">
-                <div class="form-group">
-                    <label>Your Name</label>
-                    <input type="text" class="form-control" placeholder="Jane Doe">
+        <section class="market-stall" id="locations">
+            <h2 class="section-title">Visit Our Market Stall</h2>
+            <p class="section-subtitle">Where tradition meets your sweet tooth</p>
+            
+            <div class="contact-grid">
+                 <div class="contact-card">
+                    <div class="contact-icon">🏪</div>
+                    <h3>Horsham Market</h3>
+                    <p><strong>Every Saturday</strong><br>8:00am - 1:00pm<br>Firebrace Street</p>
+                 </div>
+                 <div class="contact-card">
+                    <div class="contact-icon">🎪</div>
+                    <h3>Community Events</h3>
+                    <p>We pop up at festivals & fairs throughout Western Victoria</p>
+                 </div>
+            </div>
+        </section>
+
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="products" id="products">
+            <h2 class="section-title">Our Classic Selection</h2>
+            <p class="section-subtitle">Handpicked traditional confectionery</p>
+
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterProducts('all')">All Treats</button>
+                <button class="filter-btn" onclick="filterProducts('classic')">Classics</button>
+                <button class="filter-btn" onclick="filterProducts('gummy')">Gummies</button>
+                <button class="filter-btn" onclick="filterProducts('choco')">Chocolate</button>
+                <button class="filter-btn" onclick="filterProducts('rare')">Rare Finds</button>
+            </div>
+
+            <div class="products-grid">
+                <div class="product-card" data-category="classic">
+                    <div class="product-image">🚂</div>
+                    <div class="product-info">
+                        <span class="product-badge">Classic</span>
+                        <h3 class="product-name">Choo Choo Bars</h3>
+                        <p class="product-description">Soft and chewy licorice bars. A classic Australian treat.</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" class="form-control" placeholder="jane@example.com">
+
+                <div class="product-card" data-category="choco">
+                    <div class="product-image">🍬</div>
+                    <div class="product-info">
+                        <span class="product-badge">Bestseller</span>
+                        <h3 class="product-name">Jersey Caramels</h3>
+                        <p class="product-description">Soft, creamy, melt-in-your-mouth caramels.</p>
+                        <div class="product-price">$4.00</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Enquiry Type</label>
-                    <select class="form-control">
-                        <option>General Enquiry</option>
-                        <option>Rare Lolly Request</option>
-                        <option>Event Booking / Partnership</option>
-                    </select>
+
+                <div class="product-card" data-category="classic">
+                    <div class="product-image">💣</div>
+                    <div class="product-info">
+                        <span class="product-badge">Fizzy Fun</span>
+                        <h3 class="product-name">Sherbet Bombs</h3>
+                        <p class="product-description">Sweet and tangy with a fizzy powder center!</p>
+                        <div class="product-price">$4.50</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Message</label>
-                    <textarea class="form-control" placeholder="Tell us what sweet treats you need..."></textarea>
+
+                <div class="product-card" data-category="gummy">
+                    <div class="product-image">🦷</div>
+                    <div class="product-info">
+                        <span class="product-badge">Novelty</span>
+                        <h3 class="product-name">Teeth Lollies</h3>
+                        <p class="product-description">Tooth-shaped lollies with fruity flavors. Fun and delicious!</p>
+                        <div class="product-price">$3.00</div>
+                    </div>
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Send Message</button>
-            </form>
-        </div>
-    </section>
+
+                <div class="product-card" data-category="gummy">
+                    <div class="product-image">🍃</div>
+                    <div class="product-info">
+                        <span class="product-badge">Refreshing</span>
+                        <h3 class="product-name">Mint Leaves</h3>
+                        <p class="product-description">Classic refreshing mint-flavored treats.</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="gummy">
+                    <div class="product-image">🥛</div>
+                    <div class="product-info">
+                        <span class="product-badge">Popular</span>
+                        <h3 class="product-name">Milk Bottles</h3>
+                        <p class="product-description">Soft gummy candies with that classic milk bottle shape.</p>
+                        <div class="product-price">$4.50</div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="classic">
+                    <div class="product-image">🥜</div>
+                    <div class="product-info">
+                        <span class="product-badge">Crunchy</span>
+                        <h3 class="product-name">Sugar-Coated Peanuts</h3>
+                        <p class="product-description">Crunchy peanuts with a sweet coating.</p>
+                        <div class="product-price">$5.00</div>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="rare">
+                    <div class="product-image">💉</div>
+                    <div class="product-info">
+                        <span class="product-badge">Retro Fun</span>
+                        <h3 class="product-name">Tattoo Bubblegum</h3>
+                        <p class="product-description">Classic bubblegum with temporary tattoo included.</p>
+                        <div class="product-price">$2.50</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="contact" id="contact">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">We'd love to hear from you</p>
+            
+            <div class="contact-form-container">
+                <form action="mailto:your-email@example.com" method="POST" enctype="text/plain">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Your Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <select class="form-input">
+                            <option>General Enquiry</option>
+                            <option>Request a Rare Lolly</option>
+                            <option>Event Booking / Sponsorship</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-input" rows="5" placeholder="How can we sweeten your day?"></textarea>
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📱</div>
+                    <h3>Social Media</h3>
+                    <p><strong>@tr4cestreatz</strong><br>Instagram • Facebook • TikTok</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email Us</h3>
+                    <p>admin@tr4cestreatz.com</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <div class="social-icons">
-            <a href="https://instagram.com/tr4cestreatz" target="_blank">📷</a>
-            <a href="https://facebook.com/tr4cestreatz" target="_blank">👍</a>
-            <a href="https://tiktok.com/@tr4cestreatz" target="_blank">🎵</a>
+        <div class="logo-container" style="max-width: 200px; margin: 0 auto;">
+            <h2 style="font-family:'Cormorant Garamond'; color: white;">Tr4ces Treatz</h2>
         </div>
-        <p>&copy; 2024 Tr4ces Treatz. Traditional Lolly Market Stall.</p>
-        <p>Horsham & Western Victoria.</p>
+        <div class="footer-divider"></div>
+        <p><strong>Tr4ces Treatz</strong> • Traditional Lolly Market Stall</p>
+        <p>Horsham & Western Victoria, Australia</p>
+        <p style="margin-top: 1.5rem;">&copy; 2025 Tr4ces Treatz. All rights reserved.</p>
     </footer>
 
     <script>
-        // Toggle Mobile Menu
+        // Mobile menu toggle
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('active');
         }
 
-        // Live Product Filtering Logic
-        function filterSelection(category) {
-            var elements = document.getElementsByClassName("filter-item");
-            var buttons = document.getElementsByClassName("filter-btn");
+        // Filtering Logic
+        function filterProducts(category) {
+            // Update buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-            // Update active button state
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove("active");
-                if (buttons[i].innerText.toLowerCase().includes(category) || 
-                   (category === 'all' && buttons[i].innerText === 'All Treats') ||
-                   (category === 'choco' && buttons[i].innerText === 'Chocolates') ||
-                   (category === 'sour' && buttons[i].innerText === 'Sour/Fizzy') ||
-                   (category === 'rare' && buttons[i].innerText === 'Rare Finds')) {
-                    buttons[i].classList.add("active");
-                }
-            }
-
-            // Show/Hide Elements
-            for (var i = 0; i < elements.length; i++) {
-                if (category == "all") {
-                    elements[i].style.display = "block";
+            // Filter items
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                    // Optional: Add animation
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 50);
                 } else {
-                    if (elements[i].classList.contains(category)) {
-                        elements[i].style.display = "block";
-                    } else {
-                        elements[i].style.display = "none";
-                    }
+                    card.style.display = 'none';
                 }
-            }
+            });
         }
     </script>
 </body>
