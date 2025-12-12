@@ -3,380 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr4ces Treatz - Traditional Lolly Market Stall | Western Victoria</title>
-    <meta name="description" content="Tr4ces Treatz - Your favourite traditional lolly market stall in Horsham and Western Victoria. Fresh lollies, nostalgic treats, and rare finds at local markets.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Tr4ces Treatz | Traditional Lolly Market Stall | Horsham & Western Victoria</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Libre+Baskerville:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --vintage-red: #C41E3A;
+            --cream: #FFF8E7;
+            --dark-brown: #3E2723;
+            --gold: #D4AF37;
+            --soft-pink: #FFE4E1;
+            --stripe-color: #8B4513;
+            --black: #1a1a1a;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --vintage-red: #C41E3A;
-            --vintage-cream: #FFF8E7;
-            --vintage-dark: #3E2723;
-            --vintage-gold: #D4AF37;
-            --vintage-brown: #8B4513;
-        }
-
         body {
             font-family: 'Lato', sans-serif;
-            line-height: 1.6;
-            color: var(--vintage-dark);
-            background-color: var(--vintage-cream);
+            background: var(--cream);
+            color: var(--dark-brown);
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        h1, h2, h3 {
-            font-family: 'Cormorant Garamond', serif;
-        }
-
-        h2 {
-            font-family: 'Libre Baskerville', serif;
-        }
-
-        /* Awning decoration */
+        /* Striped awning pattern */
         .awning {
             height: 80px;
             background: repeating-linear-gradient(
-                45deg,
-                var(--vintage-red),
-                var(--vintage-red) 20px,
-                white 20px,
-                white 40px
+                90deg,
+                var(--vintage-red) 0px,
+                var(--vintage-red) 40px,
+                white 40px,
+                white 80px
             );
-            border-bottom: 4px solid var(--vintage-dark);
+            border-bottom: 5px solid var(--dark-brown);
+            position: relative;
+        }
+
+        .awning::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                var(--dark-brown) 38px,
+                var(--dark-brown) 42px,
+                transparent 42px,
+                transparent 80px
+            );
         }
 
         /* Header */
         header {
-            background-color: var(--vintage-cream);
+            background: white;
+            padding: 2rem 5%;
             text-align: center;
-            padding: 2rem 1rem;
-            border-bottom: 3px solid var(--vintage-red);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .logo-container {
-            margin-bottom: 1rem;
+            max-width: 480px;
+            margin: 0 auto 1rem;
+            animation: scaleIn 0.8s ease-out;
         }
 
-        .logo {
-            width: 480px;
-            max-width: 90%;
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .logo-container img {
+            width: 100%;
             height: auto;
+            filter: drop-shadow(0 4px 12px rgba(196, 30, 58, 0.3));
             border-radius: 50%;
-            padding: 20px;
             background: white;
-            filter: drop-shadow(0 4px 15px rgba(255, 105, 180, 0.3));
+            padding: 1rem;
         }
 
-        .tagline {
+        .header-tagline {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            color: var(--vintage-brown);
+            font-size: 1.4rem;
+            color: var(--vintage-red);
             font-style: italic;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
         }
 
         /* Navigation */
         nav {
-            background-color: var(--vintage-red);
-            padding: 1rem;
+            background: var(--dark-brown);
+            padding: 1rem 5%;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        nav ul {
-            list-style: none;
+        .nav-links {
             display: flex;
             justify-content: center;
+            gap: 3rem;
+            list-style: none;
             flex-wrap: wrap;
-            gap: 2rem;
         }
 
-        nav a {
-            color: var(--vintage-cream);
+        .nav-links a {
+            color: var(--cream);
             text-decoration: none;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
-            padding-bottom: 3px;
-            border-bottom: 2px solid transparent;
+            position: relative;
+            padding: 0.5rem 0;
         }
 
-        nav a:hover {
-            border-bottom: 2px solid var(--vintage-gold);
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, var(--vintage-red) 0%, var(--vintage-brown) 100%);
-            color: var(--vintage-cream);
+            background: linear-gradient(135deg, var(--soft-pink) 0%, var(--cream) 100%);
+            padding: 5rem 5%;
             text-align: center;
-            padding: 4rem 2rem;
             position: relative;
-            overflow: hidden;
+            border-bottom: 3px solid var(--vintage-red);
         }
 
         .hero::before {
+            content: '🍬';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%) rotate(-15deg);
+        }
+
+        .hero::after {
+            content: '🍭';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%) rotate(15deg);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vintage-badge {
+            display: inline-block;
+            background: var(--vintage-red);
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(196, 30, 58, 0.3);
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: var(--dark-brown);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero .location {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.4rem;
+            color: var(--vintage-red);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--dark-brown);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* Decorative divider */
+        .divider {
+            text-align: center;
+            margin: 3rem 0;
+            font-size: 2rem;
+            color: var(--vintage-red);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        /* Market Stall Section */
+        .market-stall {
+            padding: 4rem 0;
+            background: white;
+            margin: 3rem -5vw;
+            padding-left: 5vw;
+            padding-right: 5vw;
+            border-top: 3px solid var(--vintage-red);
+            border-bottom: 3px solid var(--vintage-red);
+            position: relative;
+        }
+
+        .market-stall::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .vintage-badge {
-            display: inline-block;
-            background-color: var(--vintage-cream);
-            color: var(--vintage-red);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-weight: bold;
-            margin-bottom: 1.5rem;
-            border: 3px solid var(--vintage-gold);
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            font-style: italic;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background-color: var(--vintage-cream);
-            color: var(--vintage-red);
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 3px solid var(--vintage-gold);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .cta-button:hover {
-            background-color: var(--vintage-gold);
-            color: var(--vintage-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .cta-button.secondary {
-            background-color: transparent;
-            color: var(--vintage-cream);
-            border-color: var(--vintage-cream);
-        }
-
-        .cta-button.secondary:hover {
-            background-color: var(--vintage-cream);
-            color: var(--vintage-red);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        section {
-            margin-bottom: 4rem;
+            height: 40px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--vintage-red) 0px,
+                var(--vintage-red) 30px,
+                white 30px,
+                white 60px
+            );
         }
 
         .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--dark-brown);
             text-align: center;
-            font-size: 2.5rem;
-            color: var(--vintage-red);
             margin-bottom: 1rem;
-            position: relative;
-            padding-bottom: 1rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background-color: var(--vintage-gold);
+            font-weight: 700;
         }
 
         .section-subtitle {
+            font-family: 'Libre Baskerville', serif;
+            color: var(--vintage-red);
             text-align: center;
-            font-size: 1.2rem;
-            color: var(--vintage-brown);
+            font-size: 1.1rem;
             margin-bottom: 3rem;
             font-style: italic;
         }
 
         /* Market Locations */
-        .markets-grid {
+        .market-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
             margin-top: 3rem;
         }
 
         .market-card {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-top: 5px solid var(--vintage-red);
-            position: relative;
+            background: var(--cream);
+            border: 3px solid var(--dark-brown);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .market-card::before {
-            content: '🚩';
+            content: '';
             position: absolute;
             top: -15px;
-            right: 20px;
-            font-size: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 30px;
+            background: var(--vintage-red);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
         }
 
         .market-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .market-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .market-card h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.8rem;
             color: var(--vintage-red);
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .market-date {
-            color: var(--vintage-brown);
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--dark-brown);
+            font-size: 1.1rem;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
+        .market-card p {
+            color: var(--dark-brown);
+            line-height: 1.7;
+        }
+
         /* Products Section */
+        .products {
+            padding: 4rem 0;
+        }
+
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
             margin-top: 3rem;
         }
 
         .product-card {
-            background: linear-gradient(135deg, white 0%, var(--vintage-cream) 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(196, 30, 58, 0.05) 10px, rgba(196, 30, 58, 0.05) 20px);
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .product-card.fade-in {
-            opacity: 1;
-            transform: translateY(0);
+            background: white;
+            border: 3px solid var(--vintage-red);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .product-card:hover {
             transform: translateY(-10px) rotate(-1deg);
-            box-shadow: 0 10px 30px rgba(196, 30, 58, 0.3);
-            border-color: var(--vintage-gold);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            height: 220px;
+            background: linear-gradient(135deg, var(--soft-pink), var(--cream));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            border-bottom: 3px solid var(--vintage-red);
+            position: relative;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--vintage-red) 0px,
+                var(--vintage-red) 20px,
+                white 20px,
+                white 40px
+            );
+        }
+
+        .product-info {
+            padding: 2rem;
         }
 
         .product-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: var(--vintage-gold);
-            color: var(--vintage-dark);
-            padding: 0.3rem 0.8rem;
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark-brown);
+            padding: 0.3rem 1rem;
             border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
+            margin-bottom: 1rem;
             letter-spacing: 1px;
         }
 
-        .product-icon {
-            font-size: 5rem;
-            margin-bottom: 1rem;
+        .product-name {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.6rem;
+            color: var(--dark-brown);
+            margin-bottom: 0.8rem;
         }
 
-        .product-card h3 {
-            color: var(--vintage-red);
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            color: var(--vintage-brown);
-            font-weight: bold;
-            margin: 1rem 0;
-        }
-
-        .product-card p {
-            color: var(--vintage-dark);
+        .product-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
             line-height: 1.6;
         }
 
+        .product-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--vintage-red);
+        }
+
         /* About Section */
+        .about {
+            padding: 4rem 0;
+            background: white;
+            margin: 3rem -5vw;
+            padding-left: 5vw;
+            padding-right: 5vw;
+            border-top: 3px solid var(--vintage-red);
+            border-bottom: 3px solid var(--vintage-red);
+        }
+
         .about-content {
-            background-color: white;
+            max-width: 800px;
+            margin: 3rem auto 0;
+            text-align: center;
+            background: var(--cream);
             padding: 3rem;
+            border: 3px solid var(--dark-brown);
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--vintage-red);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .about-content p {
+            font-size: 1.15rem;
+            line-height: 1.9;
             margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            line-height: 1.8;
+            color: var(--dark-brown);
+        }
+
+        .about-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .signature {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--vintage-red);
+            margin-top: 2rem;
         }
 
         /* Contact Section */
+        .contact {
+            padding: 4rem 0;
+        }
+
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -385,17 +507,19 @@
         }
 
         .contact-card {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
+            background: white;
+            border: 3px solid var(--dark-brown);
+            border-radius: 15px;
+            padding: 2.5rem;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .contact-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--vintage-red);
         }
 
         .contact-icon {
@@ -404,204 +528,309 @@
         }
 
         .contact-card h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.3rem;
             color: var(--vintage-red);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
+        .contact-card p,
         .contact-card a {
-            color: var(--vintage-brown);
+            color: var(--dark-brown);
             text-decoration: none;
-            font-weight: 600;
+            font-size: 1.05rem;
         }
 
         .contact-card a:hover {
             color: var(--vintage-red);
-        }
-
-        /* Social Media Icons */
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-        }
-
-        .social-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .social-icon:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        .social-icon svg {
-            width: 24px;
-            height: 24px;
+            text-decoration: underline;
         }
 
         /* Footer */
         footer {
-            background-color: var(--vintage-dark);
-            color: var(--vintage-cream);
+            background: var(--dark-brown);
+            color: var(--cream);
+            padding: 3rem 5%;
             text-align: center;
-            padding: 3rem 2rem;
+            margin-top: 4rem;
             border-top: 5px solid var(--vintage-red);
         }
 
         .footer-logo {
-            width: 280px;
-            max-width: 80%;
+            max-width: 280px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .footer-logo img {
+            width: 100%;
             height: auto;
-            margin-bottom: 2rem;
             border-radius: 50%;
-            padding: 15px;
             background: white;
-            filter: drop-shadow(0 4px 15px rgba(255, 105, 180, 0.3));
+            padding: 1rem;
+            filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.4));
         }
 
         footer p {
-            margin-top: 2rem;
-            opacity: 0.8;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
         }
 
-        /* Scroll to top button */
-        .scroll-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background-color: var(--vintage-red);
-            color: white;
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .social-icons a {
             width: 50px;
             height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .social-icons svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .social-icons a:hover svg {
+            transform: scale(1.1);
+        }
+
+        .footer-divider {
+            width: 100px;
+            height: 2px;
+            background: var(--gold);
+            margin: 1.5rem auto;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--vintage-red);
+            color: white;
+            border: 3px solid var(--vintage-red);
+        }
+
+        .btn-primary:hover {
+            background: white;
+            color: var(--vintage-red);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(196, 30, 58, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--dark-brown);
+            border: 3px solid var(--dark-brown);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-brown);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--cream);
+            font-size: 2rem;
+            cursor: pointer;
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                position: relative;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 2rem 0;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--vintage-red);
+            color: white;
+            border: 3px solid var(--dark-brown);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.8rem;
             cursor: pointer;
             opacity: 0;
+            visibility: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 99;
+            z-index: 999;
+            box-shadow: 0 5px 20px rgba(196, 30, 58, 0.4);
         }
 
         .scroll-top.visible {
             opacity: 1;
+            visibility: visible;
         }
 
         .scroll-top:hover {
-            background-color: var(--vintage-gold);
-            transform: translateY(-5px);
+            background: var(--gold);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
         }
 
-        /* Responsive Design */
+        .scroll-top:active {
+            transform: translateY(-2px) scale(1.05);
+        }
+
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
+            .scroll-top {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 1.5rem;
             }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-            }
-
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .markets-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- Awning Decoration -->
+    <!-- Awning decoration -->
     <div class="awning"></div>
 
-    <!-- Header -->
     <header>
         <div class="logo-container">
-            <img src="logo-1.jpg" alt="Tr4ces Treatz Logo" class="logo">
+            <img src="logo-1.jpg" alt="Tr4ces Treatz Logo">
         </div>
-        <p class="tagline">Traditional Lolly Market Stall • Western Victoria</p>
+        <p class="header-tagline">Traditional Lolly Market Stall • Western Victoria</p>
     </header>
 
-    <!-- Navigation -->
     <nav>
-        <ul>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <ul class="nav-links" id="navLinks">
             <li><a href="#home">Home</a></li>
-            <li><a href="#markets">Market Locations</a></li>
-            <li><a href="#lollies">Our Lollies</a></li>
+            <li><a href="#locations">Market Locations</a></li>
+            <li><a href="#products">Our Lollies</a></li>
             <li><a href="#about">About Us</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section class="hero" id="home">
         <div class="hero-content">
             <div class="vintage-badge">Est. 2024 • Pop-Up Market Stall</div>
-            <h1>Tr4ces Treatz</h1>
-            <p>Your Favourite Traditional Lolly Market Stall in Horsham & Western Victoria</p>
-            <div class="cta-buttons">
-                <a href="#markets" class="cta-button">Find Us at Markets</a>
-                <a href="https://www.tr4cestreatz.com" target="_blank" class="cta-button secondary">Shop Online</a>
+            <h1>Welcome to Tr4ces Treatz</h1>
+            <p class="location">📍 Horsham & Western Victoria, Australia</p>
+            <p>
+                A charming pop-up lolly stall bringing traditional confectionery and classic sweets to your local markets. 
+                From nostalgic Australian favourites to rare treats, every visit is a sweet journey! 
+                Check out our full range at www.tr4cestreatz.com
+            </p>
+            <div class="cta-group">
+                <a href="#locations" class="btn btn-primary">Find Our Stall</a>
+                <a href="#products" class="btn btn-secondary">Browse Lollies</a>
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Market Locations Section -->
-        <section id="markets">
-            <h2 class="section-title">Where to Find Us</h2>
-            <p class="section-subtitle">Pop-up stall at local markets & special events across Western Victoria</p>
-            
-            <div class="markets-grid">
+    <main>
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="market-stall" id="locations">
+            <h2 class="section-title">Visit Our Market Stall</h2>
+            <p class="section-subtitle">Where tradition meets your sweet tooth</p>
+
+            <div class="market-grid">
                 <div class="market-card">
+                    <div class="market-icon">🏪</div>
                     <h3>Western Victorian Markets</h3>
                     <p class="market-date">Various Locations</p>
-                    <p>We bring our sweet treats to markets throughout Western Victoria including Horsham and surrounding areas. Follow us on social media for our latest market schedule!</p>
+                    <p>We pop up at markets throughout Western VIC<br>Check TikTok for current dates!</p>
                 </div>
 
                 <div class="market-card">
+                    <div class="market-icon">🎪</div>
                     <h3>Special Events</h3>
-                    <p class="market-date">Community Gatherings</p>
-                    <p>Find us at local festivals, fairs, and community events. We love being part of your special occasions! Check out the Wimmera Field Days and other regional events.</p>
+                    <p class="market-date">Community Fairs</p>
+                    <p>Wimmera Field Days & local festivals throughout Western Victoria</p>
                 </div>
 
                 <div class="market-card">
+                    <div class="market-icon">🌐</div>
                     <h3>Online Store</h3>
                     <p class="market-date">Shop Anytime</p>
-                    <p>Can't make it to our market stall? Visit our online store at <a href="https://www.tr4cestreatz.com" target="_blank" style="color: var(--vintage-red); font-weight: bold;">www.tr4cestreatz.com</a> for home delivery!</p>
+                    <p>Browse our full range at<br>www.tr4cestreatz.com</p>
                 </div>
 
                 <div class="market-card">
@@ -620,200 +849,246 @@
             </div>
         </section>
 
-        <!-- Products Section -->
-        <section id="lollies">
-            <h2 class="section-title">Our Sweet Selection</h2>
-            <p class="section-subtitle">Traditional lollies, nostalgic treats, and rare finds</p>
-            
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="products" id="products">
+            <h2 class="section-title">Our Classic Selection</h2>
+            <p class="section-subtitle">Handpicked traditional confectionery in clear bags with handwritten labels</p>
+
             <div class="products-grid">
                 <div class="product-card">
-                    <span class="product-badge">Novelty</span>
-                    <div class="product-icon">🦷</div>
-                    <h3>Teeth</h3>
-                    <p class="product-price">$3.00</p>
-                    <p>Classic white candy teeth that have been making kids smile for generations! Perfect for parties or just a fun treat.</p>
+                    <div class="product-image">🦷</div>
+                    <div class="product-info">
+                        <span class="product-badge">Novelty</span>
+                        <h3 class="product-name">Teeth</h3>
+                        <p class="product-description">Tooth-shaped lollies with fruity flavors and chewy texture. Fun and delicious!</p>
+                        <div class="product-price">$3.00</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Popular</span>
-                    <div class="product-icon">🍓</div>
-                    <h3>Strawberry & Cream</h3>
-                    <p class="product-price">$4.00</p>
-                    <p>Delightfully creamy strawberry flavoured lollies that melt in your mouth. A customer favourite!</p>
+                    <div class="product-image">🍓</div>
+                    <div class="product-info">
+                        <span class="product-badge">Classic</span>
+                        <h3 class="product-name">Strawberry & Cream</h3>
+                        <p class="product-description">Traditional Australian flavour combination. Sweet strawberry with creamy goodness!</p>
+                        <div class="product-price">$4.00</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Classic</span>
-                    <div class="product-icon">🐸</div>
-                    <h3>Frogs</h3>
-                    <p class="product-price">$3.50</p>
-                    <p>Chewy, fruity frog-shaped lollies in assorted flavours. Hop into happiness with these delightful treats!</p>
+                    <div class="product-image">🐸</div>
+                    <div class="product-info">
+                        <span class="product-badge">Popular</span>
+                        <h3 class="product-name">Frogs</h3>
+                        <p class="product-description">Chewy frog-shaped lollies that hop with flavor! A childhood favorite.</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Fizzy</span>
-                    <div class="product-icon">💣</div>
-                    <h3>Sherbet Bombs</h3>
-                    <p class="product-price">$4.50</p>
-                    <p>Explosive fizzy sherbet wrapped in a hard candy shell. A tangy, sweet sensation that pops in your mouth!</p>
+                    <div class="product-image">💣</div>
+                    <div class="product-info">
+                        <span class="product-badge">Fizzy Fun</span>
+                        <h3 class="product-name">Sherbet Bombs</h3>
+                        <p class="product-description">Sweet and tangy with a fizzy powder center! A burst of fruity goodness.</p>
+                        <div class="product-price">$4.50</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Unique</span>
-                    <div class="product-icon">🍇</div>
-                    <h3>Sultanas</h3>
-                    <p class="product-price">$4.00</p>
-                    <p>Not real sultanas - these are delicious chewy candy sultanas! A rare find that brings back childhood memories.</p>
+                    <div class="product-image">🍇</div>
+                    <div class="product-info">
+                        <span class="product-badge">Classic</span>
+                        <h3 class="product-name">Sultanas</h3>
+                        <p class="product-description">Chocolate-coated sultanas. The perfect sweet and fruity combination!</p>
+                        <div class="product-price">$4.00</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Aussie Icon</span>
-                    <div class="product-icon">⚡</div>
-                    <h3>Wizz Fizz</h3>
-                    <p class="product-price">$3.50</p>
-                    <p>The legendary Australian sherbet with a lollipop! Fizzy, tangy, and totally nostalgic.</p>
+                    <div class="product-image">⚡</div>
+                    <div class="product-info">
+                        <span class="product-badge">Bestseller</span>
+                        <h3 class="product-name">Wizz Fizz</h3>
+                        <p class="product-description">Fizzy sherbet that tingles on your tongue! A timeless Aussie treat.</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Best Seller</span>
-                    <div class="product-icon">🐻</div>
-                    <h3>Gummy Bears</h3>
-                    <p class="product-price">$4.50</p>
-                    <p>Soft, chewy, and bursting with fruity flavours. These colourful little bears are always a crowd pleaser!</p>
+                    <div class="product-image">🐻</div>
+                    <div class="product-info">
+                        <span class="product-badge">Kids' Choice</span>
+                        <h3 class="product-name">Gummy Bears</h3>
+                        <p class="product-description">Soft, chewy gummy bears in assorted fruit flavors. Everyone's favorite!</p>
+                        <div class="product-price">$4.50</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Traditional</span>
-                    <div class="product-icon">🫐</div>
-                    <h3>Blackcurrant Jellies</h3>
-                    <p class="product-price">$4.00</p>
-                    <p>Rich, dark purple jellies with authentic blackcurrant flavour. A sophisticated sweet treat.</p>
+                    <div class="product-image">🫐</div>
+                    <div class="product-info">
+                        <span class="product-badge">Traditional</span>
+                        <h3 class="product-name">Blackcurrant Jellies</h3>
+                        <p class="product-description">Rich blackcurrant jelly lollies. Bursting with authentic fruit flavor!</p>
+                        <div class="product-price">$4.00</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Retro</span>
-                    <div class="product-icon">👶</div>
-                    <h3>Jelly Babies</h3>
-                    <p class="product-price">$4.50</p>
-                    <p>Soft, sugar-dusted jelly babies in assorted fruit flavours. A timeless British classic!</p>
+                    <div class="product-image">👶</div>
+                    <div class="product-info">
+                        <span class="product-badge">Nostalgic</span>
+                        <h3 class="product-name">Jelly Babies</h3>
+                        <p class="product-description">Soft baby-shaped jellies in fruit flavors. A retro classic!</p>
+                        <div class="product-price">$4.50</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Variety</span>
-                    <div class="product-icon">🍬</div>
-                    <h3>Mixed Lollies</h3>
-                    <p class="product-price">$5.00</p>
-                    <p>Can't decide? Get a delicious mix of our most popular lollies! Something for everyone.</p>
+                    <div class="product-image">🍬</div>
+                    <div class="product-info">
+                        <span class="product-badge">Value Pack</span>
+                        <h3 class="product-name">Mixed Lollies</h3>
+                        <p class="product-description">A delightful assortment of our most popular treats. Something for everyone!</p>
+                        <div class="product-price">$5.00</div>
+                    </div>
                 </div>
 
                 <div class="product-card">
-                    <span class="product-badge">Sweet</span>
-                    <div class="product-icon">🌸</div>
-                    <h3>Raspberry Buds</h3>
-                    <p class="product-price">$3.50</p>
-                    <p>Soft, pink raspberry-flavoured buds coated in coconut. A delicate and delicious old-fashioned treat.</p>
+                    <div class="product-image">🌸</div>
+                    <div class="product-info">
+                        <span class="product-badge">Sweet & Tangy</span>
+                        <h3 class="product-name">Raspberry Buds</h3>
+                        <p class="product-description">Soft raspberry-flavored buds with a delicate sweetness. Absolutely delicious!</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
                 </div>
             </div>
+
+            <p style="text-align: center; margin-top: 3rem; font-size: 1.1rem; font-style: italic; color: #666;">
+                ✨ Plus many more! Selection varies - we're always hunting for rare & traditional treats! ✨
+            </p>
         </section>
 
-        <!-- About Section -->
-        <section id="about">
-            <h2 class="section-title">About Tr4ces Treatz</h2>
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="about" id="about">
+            <h2 class="section-title">Our Story</h2>
+            <p class="section-subtitle">Your one-stop shop for all things sweet!</p>
+
             <div class="about-content">
-                <p><strong>Welcome to TR4CES TREATZ</strong> your one-stop shop for all things sweet! We're here to satisfy your cravings with a wide range of lollies, chocolates, drinks, and even other sweet delights.</p>
-                
-                <p>At TR4CES TREATZ, we believe that indulging in delicious treats should be a joyful experience. That's why we carefully curate our selection to offer you the tastiest and highest quality goodies. Whether you're in the mood for a decadent chocolate bar, a refreshing drink, or a mouthwatering sweet treat, we've got something to satisfy every craving.</p>
-                
-                <p>We take pride in sourcing our products from trusted suppliers who share our commitment to quality and taste. Our team is dedicated to providing you with exceptional customer service, ensuring that your shopping experience is as delightful as the treats themselves.</p>
-                
-                <p>But it's not just about the treats at TR4CES TREATZ. We also care about creating a sense of community. We love connecting with our customers and hearing about your favorite treats and memories associated with them. So feel free to share your stories and tag us on social media using <strong>#TR4CESTREATZ</strong></p>
-                
-                <p>Thank you for choosing TR4CES TREATZ as your go-to online store for all your sweet desires. We can't wait to bring a little bit of sweetness into your life. <strong>Happy shopping!</strong></p>
-                
-                <p style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--vintage-gold);"><em>If you have lollies you'd like us to sell, or would like to discuss a partnership, please get in touch!</em></p>
+                <p>
+                    Welcome to <strong>TR4CES TREATZ</strong>, your one-stop shop for all things sweet! We're here to 
+                    satisfy your cravings with a wide range of lollies, chocolates, drinks, and even other sweet delights.
+                </p>
+                <p>
+                    At TR4CES TREATZ, we believe that indulging in delicious treats should be a joyful experience. 
+                    That's why we carefully curate our selection to offer you the tastiest and highest quality goodies. 
+                    Whether you're in the mood for a decadent chocolate bar, a refreshing drink, or a mouthwatering sweet 
+                    treat, we've got something to satisfy every craving.
+                </p>
+                <p>
+                    We take pride in sourcing our products from trusted suppliers who share our commitment to quality and taste. 
+                    Our team is dedicated to providing you with exceptional customer service, ensuring that your shopping 
+                    experience is as delightful as the treats themselves.
+                </p>
+                <p>
+                    But it's not just about the treats at TR4CES TREATZ. We also care about creating a sense of community. 
+                    We love connecting with our customers and hearing about your favorite treats and memories associated with them. 
+                    So feel free to share your stories and tag us on social media using <strong>#TR4CESTREATZ</strong>
+                </p>
+                <p>
+                    Thank you for choosing TR4CES TREATZ as your go-to online store for all your sweet desires. 
+                    We can't wait to bring a little bit of sweetness into your life. Happy shopping!
+                </p>
+                <p style="margin-top: 2rem; font-size: 0.95rem; font-style: italic; color: #666;">
+                    <strong>Note:</strong> If you have lollies you'd like us to sell at our stall, 
+                    please get in touch via our website.
+                </p>
+                <p class="signature">~ The Tr4ces Treatz Family</p>
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact">
-            <h2 class="section-title">Get In Touch</h2>
-            <p class="section-subtitle">Follow us, shop online, or catch us at a market near you!</p>
-            
+        <div class="divider">❦ ❦ ❦</div>
+
+        <section class="contact" id="contact">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">We'd love to hear from you</p>
+
             <div class="contact-grid">
                 <div class="contact-card">
-                    <div class="contact-icon">🛒</div>
-                    <h3>Online Store</h3>
+                    <div class="contact-icon">🌐</div>
+                    <h3>Website & Online Store</h3>
                     <p><a href="https://www.tr4cestreatz.com" target="_blank">www.tr4cestreatz.com</a></p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Browse our full range & shop online!</p>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-icon">📱</div>
                     <h3>Social Media</h3>
-                    <p style="margin-bottom: 0.5rem;"><strong>@tr4cestreatz</strong></p>
-                    <div class="social-icons">
-                        <a href="https://www.instagram.com/tr4cestreatz" target="_blank" class="social-icon" aria-label="Instagram">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#E1306C">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                            </svg>
-                        </a>
-                        <a href="https://www.facebook.com/tr4cestreatz" target="_blank" class="social-icon" aria-label="Facebook">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1877F2">
-                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            </svg>
-                        </a>
-                        <a href="https://www.tiktok.com/@tr4cestreatz" target="_blank" class="social-icon" aria-label="TikTok">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">
-                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                            </svg>
-                        </a>
-                    </div>
+                    <p><a href="https://instagram.com/tr4cestreatz" target="_blank">@tr4cestreatz</a></p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Instagram • Facebook • TikTok</p>
                 </div>
 
                 <div class="contact-card">
-                    <div class="contact-icon">✉️</div>
-                    <h3>Email</h3>
-                    <p><a href="mailto:hello@tr4cestreatz.com">hello@tr4cestreatz.com</a></p>
+                    <div class="contact-icon">📧</div>
+                    <h3>Get in Touch</h3>
+                    <p>Visit our website for contact details</p>
+                    <p><a href="https://www.tr4cestreatz.com" target="_blank">www.tr4cestreatz.com</a></p>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-icon">📍</div>
                     <h3>Location</h3>
-                    <p>Horsham & Western Victoria<br>Australia</p>
+                    <p>Horsham & Western Victoria<br>Pop-up at local markets</p>
                 </div>
             </div>
         </section>
-    </div>
+    </main>
 
-    <!-- Footer -->
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTopBtn" title="Back to top">
+        ⬆️
+    </button>
+
     <footer>
-        <img src="logo-1.jpg" alt="Tr4ces Treatz" class="footer-logo">
+        <div class="footer-logo">
+            <img src="logo-1.jpg" alt="Tr4ces Treatz">
+        </div>
         <div class="social-icons">
-            <a href="https://www.instagram.com/tr4cestreatz" target="_blank" class="social-icon" aria-label="Instagram">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#E1306C">
+            <a href="https://instagram.com/tr4cestreatz" target="_blank" title="Instagram">
+                <svg fill="#E1306C" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
             </a>
-            <a href="https://www.facebook.com/tr4cestreatz" target="_blank" class="social-icon" aria-label="Facebook">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1877F2">
+            <a href="https://facebook.com/tr4cestreatz" target="_blank" title="Facebook">
+                <svg fill="#1877F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
             </a>
-            <a href="https://www.tiktok.com/@tr4cestreatz" target="_blank" class="social-icon" aria-label="TikTok">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">
+            <a href="https://tiktok.com/@tr4cestreatz" target="_blank" title="TikTok">
+                <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                 </svg>
             </a>
         </div>
-        <p>&copy; 2024 Tr4ces Treatz. All rights reserved. Traditional Lolly Market Stall • Western Victoria</p>
+        <div class="footer-divider"></div>
+        <p><strong>Tr4ces Treatz</strong> • Traditional Lolly Market Stall</p>
+        <p>Horsham & Western Victoria, Australia</p>
+        <p style="margin-top: 1rem;"><a href="https://www.tr4cestreatz.com" target="_blank" style="color: var(--gold); text-decoration: none;">www.tr4cestreatz.com</a></p>
+        <p style="margin-top: 1.5rem;">&copy; 2024 Tr4ces Treatz. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Spreading sweetness, one lolly at a time</p>
     </footer>
 
-    <!-- Scroll to Top Button -->
-    <div class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        ↑
-    </div>
-
     <script>
-        // Smooth scroll for navigation links
+        // Mobile menu toggle
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -823,13 +1098,15 @@
                         behavior: 'smooth',
                         block: 'start'
                     });
+                    document.getElementById('navLinks').classList.remove('active');
                 }
             });
         });
 
-        // Show/hide scroll to top button
-        const scrollTopBtn = document.querySelector('.scroll-top');
-        window.addEventListener('scroll', () => {
+        // Scroll to Top Button functionality
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+        window.addEventListener('scroll', function() {
             if (window.pageYOffset > 300) {
                 scrollTopBtn.classList.add('visible');
             } else {
@@ -837,22 +1114,32 @@
             }
         });
 
-        // Fade in products on scroll
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Add scroll animation
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                    observer.unobserve(entry.target);
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.product-card').forEach(card => {
+        document.querySelectorAll('.product-card, .market-card, .contact-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
             observer.observe(card);
         });
     </script>
