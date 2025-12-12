@@ -22,6 +22,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Lato', sans-serif;
             background: var(--cream);
@@ -30,7 +34,6 @@
             overflow-x: hidden;
         }
 
-        /* Striped awning pattern */
         .awning {
             height: 80px;
             background: repeating-linear-gradient(
@@ -62,7 +65,6 @@
             );
         }
 
-        /* Header */
         header {
             background: white;
             padding: 2rem 5%;
@@ -111,7 +113,6 @@
             margin-top: 1rem;
         }
 
-        /* Navigation */
         nav {
             background: var(--dark-brown);
             padding: 1rem 5%;
@@ -160,7 +161,6 @@
             width: 100%;
         }
 
-        /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--soft-pink) 0%, var(--cream) 100%);
             padding: 5rem 5%;
@@ -225,10 +225,6 @@
             font-size: 1.4rem;
             color: var(--vintage-red);
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
         }
 
         .hero p {
@@ -239,7 +235,6 @@
             line-height: 1.8;
         }
 
-        /* Decorative divider */
         .divider {
             text-align: center;
             margin: 3rem 0;
@@ -247,14 +242,12 @@
             color: var(--vintage-red);
         }
 
-        /* Main Content */
         main {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 5%;
         }
 
-        /* Market Stall Section */
         .market-stall {
             padding: 4rem 0;
             background: white;
@@ -300,7 +293,6 @@
             font-style: italic;
         }
 
-        /* Market Locations */
         .market-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -317,6 +309,20 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .market-card.animate {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .market-card::before {
@@ -334,6 +340,15 @@
         .market-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .market-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 2px solid var(--vintage-red);
         }
 
         .market-icon {
@@ -357,12 +372,38 @@
             letter-spacing: 1px;
         }
 
+        .market-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .market-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .market-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .market-card.expanded .market-details {
+            max-height: 300px;
+        }
+
         .market-card p {
             color: var(--dark-brown);
             line-height: 1.7;
         }
 
-        /* Products Section */
         .products {
             padding: 4rem 0;
         }
@@ -381,6 +422,12 @@
             overflow: hidden;
             transition: all 0.4s ease;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .product-card.animate {
+            animation: fadeInUp 0.6s ease forwards;
         }
 
         .product-card:hover {
@@ -397,6 +444,12 @@
             font-size: 5rem;
             border-bottom: 3px solid var(--vintage-red);
             position: relative;
+        }
+
+        .product-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
         }
 
         .product-image::before {
@@ -453,7 +506,6 @@
             color: var(--vintage-red);
         }
 
-        /* About Section */
         .about {
             padding: 4rem 0;
             background: white;
@@ -473,6 +525,12 @@
             border: 3px solid var(--dark-brown);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .about-content.animate {
+            animation: fadeInUp 0.8s ease forwards;
         }
 
         .about-content p {
@@ -480,10 +538,6 @@
             line-height: 1.9;
             margin-bottom: 1.5rem;
             color: var(--dark-brown);
-        }
-
-        .about-content p:last-child {
-            margin-bottom: 0;
         }
 
         .signature {
@@ -494,7 +548,6 @@
             margin-top: 2rem;
         }
 
-        /* Contact Section */
         .contact {
             padding: 4rem 0;
         }
@@ -514,6 +567,12 @@
             text-align: center;
             transition: all 0.3s ease;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .contact-card.animate {
+            animation: fadeInUp 0.6s ease forwards;
         }
 
         .contact-card:hover {
@@ -546,7 +605,6 @@
             text-decoration: underline;
         }
 
-        /* Footer */
         footer {
             background: var(--dark-brown);
             color: var(--cream);
@@ -591,7 +649,6 @@
             background: white;
             border-radius: 50%;
             transition: all 0.3s ease;
-            text-decoration: none;
         }
 
         .social-icons a:hover {
@@ -604,10 +661,6 @@
             height: 28px;
         }
 
-        .social-icons a:hover svg {
-            transform: scale(1.1);
-        }
-
         .footer-divider {
             width: 100px;
             height: 2px;
@@ -615,7 +668,6 @@
             margin: 1.5rem auto;
         }
 
-        /* Buttons */
         .btn {
             display: inline-block;
             padding: 1rem 2.5rem;
@@ -664,59 +716,6 @@
             margin-top: 2rem;
         }
 
-        /* Mobile Menu */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--cream);
-            font-size: 2rem;
-            cursor: pointer;
-            position: absolute;
-            right: 5%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                position: relative;
-            }
-
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                gap: 1rem;
-                padding: 2rem 0;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .cta-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .about-content {
-                padding: 2rem;
-            }
-        }
-
-        /* Scroll to Top Button */
         .scroll-top {
             position: fixed;
             bottom: 30px;
@@ -750,23 +749,20 @@
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
         }
 
-        .scroll-top:active {
-            transform: translateY(-2px) scale(1.05);
-        }
-
         @media (max-width: 768px) {
-            .scroll-top {
-                width: 50px;
-                height: 50px;
-                bottom: 20px;
-                right: 20px;
-                font-size: 1.5rem;
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .cta-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Awning decoration -->
     <div class="awning"></div>
 
     <header>
@@ -777,8 +773,7 @@
     </header>
 
     <nav>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <ul class="nav-links" id="navLinks">
+        <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#locations">Market Locations</a></li>
             <li><a href="#products">Our Lollies</a></li>
@@ -792,11 +787,7 @@
             <div class="vintage-badge">Est. 2024 • Pop-Up Market Stall</div>
             <h1>Welcome to Tr4ces Treatz</h1>
             <p class="location">📍 Horsham & Western Victoria, Australia</p>
-            <p>
-                A charming pop-up lolly stall bringing traditional confectionery and classic sweets to your local markets. 
-                From nostalgic Australian favourites to rare treats, every visit is a sweet journey! 
-                Check out our full range at www.tr4cestreatz.com
-            </p>
+            <p>A charming pop-up lolly stall bringing traditional confectionery and classic sweets to your local markets.</p>
             <div class="cta-group">
                 <a href="#locations" class="btn btn-primary">Find Our Stall</a>
                 <a href="#products" class="btn btn-secondary">Browse Lollies</a>
@@ -809,50 +800,127 @@
 
         <section class="market-stall" id="locations">
             <h2 class="section-title">Visit Our Market Stall</h2>
-            <p class="section-subtitle">Where tradition meets your sweet tooth</p>
+            <p class="section-subtitle">Click any card to see more details</p>
 
             <div class="market-grid">
-                <div class="market-card">
+                <div class="market-card" onclick="toggleCard(this)">
                     <div class="market-icon">🏪</div>
-                    <h3>Western Victorian Markets</h3>
+                    <div class="market-card-header">
+                        <h3>Western Victorian Markets</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
                     <p class="market-date">Various Locations</p>
-                    <p>We pop up at markets throughout Western VIC<br>Check TikTok for current dates!</p>
+                    <div class="market-details">
+                        <p>We pop up at markets throughout Western Victoria including Horsham. Check TikTok for current dates!</p>
+                    </div>
                 </div>
 
-                <div class="market-card">
-                    <img src="special.jpg" alt="Special Events" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 1rem;">
-                    <div class="market-icon">🎪</div>
-                    <h3>Special Events</h3>
-                    <p class="market-date">Community Fairs</p>
-                    <p>Wimmera Field Days & local festivals throughout Western Victoria</p>
+                <div class="market-card" onclick="toggleCard(this)">
+                    <img src="special.jpg" alt="Special Events">
+                    <div class="market-card-header">
+                        <h3>Special Events</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <p class="market-date">Community Gatherings</p>
+                    <div class="market-details">
+                        <p>Find us at local festivals, fairs, and community events. We love being part of your special occasions!</p>
+                    </div>
                 </div>
 
-                <div class="market-card">
+                <div class="market-card" onclick="toggleCard(this)">
+                    <div class="market-icon">🎵</div>
+                    <div class="market-card-header">
+                        <h3>Festivals</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <p class="market-date">Music & Food Festivals</p>
+                    <div class="market-details">
+                        <p>We love bringing sweet treats to festivals across Western Victoria! From music to food events, we're there! 🎵🍬</p>
+                    </div>
+                </div>
+
+                <div class="market-card" onclick="toggleCard(this)">
+                    <div class="market-icon">🚚</div>
+                    <div class="market-card-header">
+                        <h3>Truck Shows / Show and Shine</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <p class="market-date">Automotive Events</p>
+                    <div class="market-details">
+                        <p>Find us at truck shows, car shows, and show and shine events! Classic vehicles deserve classic lollies 🚚✨🍭</p>
+                    </div>
+                </div>
+
+                <div class="market-card" onclick="toggleCard(this)">
+                    <div class="market-icon">🐰</div>
+                    <div class="market-card-header">
+                        <h3>Easter Festivals</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <p class="market-date">Seasonal Events</p>
+                    <div class="market-details">
+                        <p>Hop on over for Easter fun! We bring the sweetest treats to Easter festivals, egg hunts, and spring celebrations 🐰🥚🍬</p>
+                    </div>
+                </div>
+
+                <div class="market-card" onclick="toggleCard(this)">
+                    <div class="market-icon">💼</div>
+                    <div class="market-card-header">
+                        <h3>Corporate / Business Events</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <p class="market-date">Professional Catering</p>
+                    <div class="market-details">
+                        <p>Make your corporate event memorable! We provide lolly bars, gift packages, and sweet catering 💼🍬</p>
+                    </div>
+                </div>
+
+                <div class="market-card" onclick="toggleCard(this)">
                     <div class="market-icon">🌐</div>
-                    <h3>Online Store</h3>
+                    <div class="market-card-header">
+                        <h3>Online Store</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
                     <p class="market-date">Shop Anytime</p>
-                    <p>Browse our full range at<br>www.tr4cestreatz.com</p>
+                    <div class="market-details">
+                        <p>Browse our full range at www.tr4cestreatz.com</p>
+                    </div>
                 </div>
 
-                <div class="market-card">
-                    <img src="media-1935676352.jpeg" alt="Carols by Candlelight" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 1rem;">
-                    <h3>Carols by Candlelight</h3>
+                <div class="market-card" onclick="toggleCard(this)">
+                    <img src="media-1935676352.jpeg" alt="Carols by Candlelight">
+                    <div class="market-card-header">
+                        <h3>Carols by Candlelight</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
                     <p class="market-date">Community Events</p>
-                    <p>We love supporting local Horsham events! Follow us to see where we'll be next 🎄✨</p>
+                    <div class="market-details">
+                        <p>We love supporting local Horsham events! Follow us to see where we'll be next 🎄✨</p>
+                    </div>
                 </div>
 
-                <div class="market-card">
-                    <img src="horsham-fishing-competition.png" alt="Get Hooked on the Horsham Fishing Comp" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 1rem;">
-                    <h3>Horsham Fishing Comp</h3>
+                <div class="market-card" onclick="toggleCard(this)">
+                    <img src="horsham-fishing-competition.png" alt="Horsham Fishing Comp">
+                    <div class="market-card-header">
+                        <h3>Horsham Fishing Comp</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
                     <p class="market-date">Community Events</p>
-                    <p>Get hooked on the fun! We'll be at the Horsham Fishing Competition bringing sweet treats for all the anglers 🎣🍬</p>
+                    <div class="market-details">
+                        <p>Get hooked on the fun! We'll be at the Horsham Fishing Competition 🎣🍬</p>
+                    </div>
                 </div>
 
-                <div class="market-card">
-                    <img src="loolied.jpg" alt="Birthday Parties" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 1rem;">
-                    <h3>Birthday Parties</h3>
+                <div class="market-card" onclick="toggleCard(this)">
+                    <img src="loolied.jpg" alt="Birthday Parties">
+                    <div class="market-card-header">
+                        <h3>Birthday Parties</h3>
+                        <span class="expand-icon">▼</span>
+                    </div>
                     <p class="market-date">Private Events</p>
-                    <p>Make your party extra sweet! We provide lolly buffets and party packages for birthdays and special celebrations 🎂🎈🍬</p>
+                    <div class="market-details">
+                        <p>Make your party extra sweet! We provide lolly buffets and party packages 🎂🎈🍬</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -861,7 +929,7 @@
 
         <section class="products" id="products">
             <h2 class="section-title">Our Classic Selection</h2>
-            <p class="section-subtitle">Handpicked traditional confectionery in clear bags with handwritten labels</p>
+            <p class="section-subtitle">Handpicked traditional confectionery</p>
 
             <div class="products-grid">
                 <div class="product-card">
@@ -869,7 +937,7 @@
                     <div class="product-info">
                         <span class="product-badge">Novelty</span>
                         <h3 class="product-name">Teeth</h3>
-                        <p class="product-description">Tooth-shaped lollies with fruity flavors and chewy texture. Fun and delicious!</p>
+                        <p class="product-description">Tooth-shaped lollies with fruity flavors!</p>
                         <div class="product-price">$3.00</div>
                     </div>
                 </div>
@@ -879,7 +947,7 @@
                     <div class="product-info">
                         <span class="product-badge">Classic</span>
                         <h3 class="product-name">Strawberry & Cream</h3>
-                        <p class="product-description">Traditional Australian flavour combination. Sweet strawberry with creamy goodness!</p>
+                        <p class="product-description">Traditional Australian flavor combination!</p>
                         <div class="product-price">$4.00</div>
                     </div>
                 </div>
@@ -889,7 +957,7 @@
                     <div class="product-info">
                         <span class="product-badge">Popular</span>
                         <h3 class="product-name">Frogs</h3>
-                        <p class="product-description">Chewy frog-shaped lollies that hop with flavor! A childhood favorite.</p>
+                        <p class="product-description">Chewy frog-shaped lollies that hop with flavor!</p>
                         <div class="product-price">$3.50</div>
                     </div>
                 </div>
@@ -899,7 +967,7 @@
                     <div class="product-info">
                         <span class="product-badge">Fizzy Fun</span>
                         <h3 class="product-name">Sherbet Bombs</h3>
-                        <p class="product-description">Sweet and tangy with a fizzy powder center! A burst of fruity goodness.</p>
+                        <p class="product-description">Sweet and tangy with fizzy powder!</p>
                         <div class="product-price">$4.50</div>
                     </div>
                 </div>
@@ -909,7 +977,7 @@
                     <div class="product-info">
                         <span class="product-badge">Classic</span>
                         <h3 class="product-name">Sultanas</h3>
-                        <p class="product-description">Chocolate-coated sultanas. The perfect sweet and fruity combination!</p>
+                        <p class="product-description">Chocolate-coated sultanas!</p>
                         <div class="product-price">$4.00</div>
                     </div>
                 </div>
@@ -919,7 +987,7 @@
                     <div class="product-info">
                         <span class="product-badge">Bestseller</span>
                         <h3 class="product-name">Wizz Fizz</h3>
-                        <p class="product-description">Fizzy sherbet that tingles on your tongue! A timeless Aussie treat.</p>
+                        <p class="product-description">Fizzy sherbet that tingles!</p>
                         <div class="product-price">$3.50</div>
                     </div>
                 </div>
@@ -929,7 +997,7 @@
                     <div class="product-info">
                         <span class="product-badge">Kids' Choice</span>
                         <h3 class="product-name">Gummy Bears</h3>
-                        <p class="product-description">Soft, chewy gummy bears in assorted fruit flavors. Everyone's favorite!</p>
+                        <p class="product-description">Soft, chewy gummy bears in fruit flavors!</p>
                         <div class="product-price">$4.50</div>
                     </div>
                 </div>
@@ -939,7 +1007,7 @@
                     <div class="product-info">
                         <span class="product-badge">Traditional</span>
                         <h3 class="product-name">Blackcurrant Jellies</h3>
-                        <p class="product-description">Rich blackcurrant jelly lollies. Bursting with authentic fruit flavor!</p>
+                        <p class="product-description">Rich blackcurrant jelly lollies!</p>
                         <div class="product-price">$4.00</div>
                     </div>
                 </div>
@@ -949,7 +1017,7 @@
                     <div class="product-info">
                         <span class="product-badge">Nostalgic</span>
                         <h3 class="product-name">Jelly Babies</h3>
-                        <p class="product-description">Soft baby-shaped jellies in fruit flavors. A retro classic!</p>
+                        <p class="product-description">Soft baby-shaped jellies!</p>
                         <div class="product-price">$4.50</div>
                     </div>
                 </div>
@@ -959,7 +1027,7 @@
                     <div class="product-info">
                         <span class="product-badge">Value Pack</span>
                         <h3 class="product-name">Mixed Lollies</h3>
-                        <p class="product-description">A delightful assortment of our most popular treats. Something for everyone!</p>
+                        <p class="product-description">An assortment of our most popular treats!</p>
                         <div class="product-price">$5.00</div>
                     </div>
                 </div>
@@ -969,14 +1037,26 @@
                     <div class="product-info">
                         <span class="product-badge">Sweet & Tangy</span>
                         <h3 class="product-name">Raspberry Buds</h3>
-                        <p class="product-description">Soft raspberry-flavored buds with a delicate sweetness. Absolutely delicious!</p>
+                        <p class="product-description">Soft raspberry-flavored buds!</p>
+                        <div class="product-price">$3.50</div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="redskins7.jpg" alt="Redskins">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge">Aussie Legend</span>
+                        <h3 class="product-name">Redskins</h3>
+                        <p class="product-description">The iconic Australian raspberry chew! 🍓</p>
                         <div class="product-price">$3.50</div>
                     </div>
                 </div>
             </div>
 
             <p style="text-align: center; margin-top: 3rem; font-size: 1.1rem; font-style: italic; color: #666;">
-                ✨ Plus many more! Selection varies - we're always hunting for rare & traditional treats! ✨
+                ✨ Plus many more! Selection varies ✨
             </p>
         </section>
 
@@ -987,33 +1067,11 @@
             <p class="section-subtitle">Your one-stop shop for all things sweet!</p>
 
             <div class="about-content">
-                <p>
-                    Welcome to <strong>TR4CES TREATZ</strong>, your one-stop shop for all things sweet! We're here to 
-                    satisfy your cravings with a wide range of lollies, chocolates, drinks, and even other sweet delights.
-                </p>
-                <p>
-                    At TR4CES TREATZ, we believe that indulging in delicious treats should be a joyful experience. 
-                    That's why we carefully curate our selection to offer you the tastiest and highest quality goodies. 
-                    Whether you're in the mood for a decadent chocolate bar, a refreshing drink, or a mouthwatering sweet 
-                    treat, we've got something to satisfy every craving.
-                </p>
-                <p>
-                    We take pride in sourcing our products from trusted suppliers who share our commitment to quality and taste. 
-                    Our team is dedicated to providing you with exceptional customer service, ensuring that your shopping 
-                    experience is as delightful as the treats themselves.
-                </p>
-                <p>
-                    But it's not just about the treats at TR4CES TREATZ. We also care about creating a sense of community. 
-                    We love connecting with our customers and hearing about your favorite treats and memories associated with them. 
-                    So feel free to share your stories and tag us on social media using <strong>#TR4CESTREATZ</strong>
-                </p>
-                <p>
-                    Thank you for choosing TR4CES TREATZ as your go-to online store for all your sweet desires. 
-                    We can't wait to bring a little bit of sweetness into your life. Happy shopping!
-                </p>
+                <p><strong>Welcome to TR4CES TREATZ</strong>, your one-stop shop for all things sweet!</p>
+                <p>We carefully curate our selection to offer you the tastiest and highest quality goodies.</p>
+                <p>Tag us on social media using <strong>#TR4CESTREATZ</strong></p>
                 <p style="margin-top: 2rem; font-size: 0.95rem; font-style: italic; color: #666;">
-                    <strong>Note:</strong> If you have lollies you'd like us to sell at our stall, 
-                    please get in touch via our website.
+                    If you have lollies you'd like us to sell, please get in touch via our website.
                 </p>
                 <p class="signature">~ The Tr4ces Treatz Family</p>
             </div>
@@ -1028,58 +1086,46 @@
             <div class="contact-grid">
                 <div class="contact-card">
                     <div class="contact-icon">🌐</div>
-                    <h3>Website & Online Store</h3>
+                    <h3>Website</h3>
                     <p><a href="https://www.tr4cestreatz.com" target="_blank">www.tr4cestreatz.com</a></p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Browse our full range & shop online!</p>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-icon">📱</div>
                     <h3>Social Media</h3>
                     <p><a href="https://instagram.com/tr4cestreatz" target="_blank">@tr4cestreatz</a></p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Instagram • Facebook • TikTok</p>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-icon">📧</div>
-                    <h3>Get in Touch</h3>
-                    <p>Visit our website for contact details</p>
-                    <p><a href="https://www.tr4cestreatz.com" target="_blank">www.tr4cestreatz.com</a></p>
+                    <h3>Contact</h3>
+                    <p>Visit our website for details</p>
                 </div>
 
                 <div class="contact-card">
                     <div class="contact-icon">📍</div>
                     <h3>Location</h3>
-                    <p>Horsham & Western Victoria<br>Pop-up at local markets</p>
+                    <p>Horsham & Western Victoria</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Scroll to Top Button -->
-    <button class="scroll-top" id="scrollTopBtn" title="Back to top">
-        ⬆️
-    </button>
+    <button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️</button>
 
     <footer>
         <div class="footer-logo">
             <img src="logo-1.jpg" alt="Tr4ces Treatz">
         </div>
         <div class="social-icons">
-            <a href="https://instagram.com/tr4cestreatz" target="_blank" title="Instagram">
-                <svg fill="#E1306C" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
+            <a href="https://instagram.com/tr4cestreatz" target="_blank">
+                <svg fill="#E1306C" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
-            <a href="https://facebook.com/tr4cestreatz" target="_blank" title="Facebook">
-                <svg fill="#1877F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
+            <a href="https://facebook.com/tr4cestreatz" target="_blank">
+                <svg fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </a>
-            <a href="https://tiktok.com/@tr4cestreatz" target="_blank" title="TikTok">
-                <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                </svg>
+            <a href="https://tiktok.com/@tr4cestreatz" target="_blank">
+                <svg fill="#000000" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
             </a>
         </div>
         <div class="footer-divider"></div>
@@ -1087,34 +1133,51 @@
         <p>Horsham & Western Victoria, Australia</p>
         <p style="margin-top: 1rem;"><a href="https://www.tr4cestreatz.com" target="_blank" style="color: var(--gold); text-decoration: none;">www.tr4cestreatz.com</a></p>
         <p style="margin-top: 1.5rem;">&copy; 2024 Tr4ces Treatz. All rights reserved.</p>
-        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Spreading sweetness, one lolly at a time</p>
     </footer>
 
     <script>
-        // Mobile menu toggle
-        function toggleMenu() {
-            document.getElementById('navLinks').classList.toggle('active');
+        // Smooth scroll animation on load
+        function animateOnScroll() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate');
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animated elements
+            document.querySelectorAll('.market-card, .product-card, .contact-card, .about-content').forEach(card => {
+                observer.observe(card);
+            });
         }
 
-        // Smooth scrolling
+        // Toggle card expansion
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // Smooth scroll for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    document.getElementById('navLinks').classList.remove('active');
-                }
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
             });
         });
 
-        // Scroll to Top Button functionality
-        const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-        window.addEventListener('scroll', function() {
+        // Scroll to top button
+        const scrollTopBtn = document.querySelector('.scroll-top');
+        window.addEventListener('scroll', () => {
             if (window.pageYOffset > 300) {
                 scrollTopBtn.classList.add('visible');
             } else {
@@ -1122,33 +1185,9 @@
             }
         });
 
-        scrollTopBtn.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Add scroll animation
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.product-card, .market-card, .contact-card').forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
-            observer.observe(card);
+        // Initialize animations when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            animateOnScroll();
         });
     </script>
 </body>
