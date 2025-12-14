@@ -275,6 +275,69 @@
             );
         }
 
+        /* Vintage Corner Flourishes */
+        .market-stall::after {
+            content: '';
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-image: 
+                linear-gradient(45deg, var(--vintage-red) 0%, var(--vintage-red) 2px, transparent 2px),
+                linear-gradient(-45deg, var(--vintage-red) 0%, var(--vintage-red) 2px, transparent 2px);
+            background-size: 100% 100%;
+            background-position: 0 0;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+        }
+
+        .about::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            border-top: 3px solid var(--gold);
+            border-right: 3px solid var(--gold);
+            border-radius: 0 15px 0 0;
+            opacity: 0.4;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-bottom: 3px solid var(--gold);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 0 0 15px;
+            opacity: 0.4;
+        }
+
+        .products::before {
+            content: '❦';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2rem;
+            color: var(--vintage-red);
+            opacity: 0.2;
+        }
+
+        .products::after {
+            content: '❦';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--vintage-red);
+            opacity: 0.2;
+        }
+
         .section-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(2rem, 5vw, 3.5rem);
@@ -393,6 +456,7 @@
 
         .products {
             padding: 4rem 0;
+            position: relative;
         }
 
         .products-grid {
@@ -533,6 +597,88 @@
             font-style: italic;
             color: var(--vintage-red);
             margin-top: 2rem;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .testimonials::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 8rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--vintage-red);
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        .testimonials::after {
+            content: '"';
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 8rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--vintage-red);
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border: 3px solid var(--vintage-red);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .testimonial-card.animate {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .testimonial-card::before {
+            content: '⭐⭐⭐⭐⭐';
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .testimonial-quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--dark-brown);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            color: var(--vintage-red);
+            font-weight: 700;
+        }
+
+        .testimonial-location {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
         }
 
         .contact {
@@ -925,6 +1071,30 @@
                 margin-top: 2rem;
             }
 
+            /* Testimonials section */
+            .testimonials {
+                padding: 3rem 0;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .testimonial-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1rem;
+            }
+
+            .testimonials::before,
+            .testimonials::after {
+                font-size: 5rem;
+            }
+
             .contact-card {
                 padding: 2rem;
             }
@@ -1290,6 +1460,33 @@
 
         <div class="divider">❦ ❦ ❦</div>
 
+        <section class="testimonials" id="testimonials">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Sweet memories from happy customers</p>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">The kids absolutely loved the lolly buffet at our daughter's birthday party! Such a wonderful variety of traditional sweets.</p>
+                    <p class="testimonial-author">Sarah M.</p>
+                    <p class="testimonial-location">Horsham</p>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">Found them at the Horsham market - best strawberry & cream lollies I've had in years! Takes me right back to my childhood.</p>
+                    <p class="testimonial-author">John D.</p>
+                    <p class="testimonial-location">Dimboola</p>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">Brilliant addition to our corporate event! The vintage lolly bar was a huge hit with all our clients. Highly recommend!</p>
+                    <p class="testimonial-author">Emma L.</p>
+                    <p class="testimonial-location">Stawell</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider">❦ ❦ ❦</div>
+
         <section class="contact" id="contact">
             <h2 class="section-title">Bookings</h2>
             <p class="section-subtitle">We'd love to hear from you</p>
@@ -1366,7 +1563,7 @@
             }, observerOptions);
 
             // Observe all animated elements
-            document.querySelectorAll('.market-card, .product-card, .contact-card, .about-content').forEach(card => {
+            document.querySelectorAll('.market-card, .product-card, .contact-card, .about-content, .testimonial-card').forEach(card => {
                 observer.observe(card);
             });
         }
