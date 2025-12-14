@@ -871,6 +871,24 @@
             box-shadow: 0 5px 20px rgba(196, 30, 58, 0.4);
         }
 
+        .scroll-top::before {
+            content: '❤';
+            position: absolute;
+            font-size: 2.5rem;
+            color: var(--vintage-red);
+            z-index: 1;
+        }
+
+        .scroll-top::after {
+            content: '↑';
+            position: absolute;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
         .scroll-top.visible {
             opacity: 1;
             visibility: visible;
@@ -880,6 +898,10 @@
             background: var(--gold);
             transform: translateY(-5px) scale(1.1);
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .scroll-top:hover::before {
+            color: var(--gold);
         }
 
         @media (max-width: 768px) {
@@ -1161,7 +1183,14 @@
                 height: 50px;
                 bottom: 20px;
                 right: 20px;
-                font-size: 1.5rem;
+            }
+
+            .scroll-top::before {
+                font-size: 2rem;
+            }
+
+            .scroll-top::after {
+                font-size: 1.2rem;
             }
 
             /* Ensure images don't overflow */
@@ -1551,7 +1580,7 @@
         </section>
     </main>
 
-    <button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️</button>
+    <button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top"></button>
 
     <footer>
         <div class="footer-logo">
