@@ -738,6 +738,73 @@
             text-decoration: underline;
         }
 
+        /* Contact Form */
+        .contact-form {
+            max-width: 700px;
+            margin: 3rem auto 0;
+            background: white;
+            padding: 3rem;
+            border: 3px solid var(--vintage-red);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            color: var(--dark-brown);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            border: 2px solid var(--dark-brown);
+            border-radius: 8px;
+            background: var(--cream);
+            color: var(--dark-brown);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--vintage-red);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-submit {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .form-submit .btn {
+            min-width: 200px;
+        }
+
+        .form-note {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
         footer {
             background: var(--dark-brown);
             color: var(--cream);
@@ -1100,11 +1167,33 @@
                 padding: 3rem 0;
             }
 
-            .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                margin-top: 2rem;
+            .contact-form {
+                padding: 2rem 1.5rem;
+                margin: 2rem 0 0;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .form-group label {
+                font-size: 0.95rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .form-submit .btn {
                 width: 100%;
+                min-width: auto;
+            }
+
+            .form-note {
+                font-size: 0.85rem;
+                padding: 0 1rem;
             }
 
             /* Testimonials section */
@@ -1132,21 +1221,6 @@
             .testimonials::before,
             .testimonials::after {
                 font-size: 5rem;
-            }
-
-            .contact-card {
-                padding: 2rem;
-                width: 100%;
-                max-width: 100%;
-            }
-
-            .contact-card h3 {
-                font-size: 1.2rem;
-            }
-
-            .contact-card p,
-            .contact-card a {
-                font-size: 0.95rem;
             }
 
             /* Footer */
@@ -1225,17 +1299,12 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .contact-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .testimonials-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
             .market-card,
             .product-card,
-            .contact-card,
             .testimonial-card {
                 max-width: 100%;
             }
@@ -1558,24 +1627,38 @@
             <h2 class="section-title">Bookings</h2>
             <p class="section-subtitle">We'd love to hear from you</p>
 
-            <div class="contact-grid">
-                <div class="contact-card">
-                    <div class="contact-icon">📱</div>
-                    <h3>Social Media</h3>
-                    <p><a href="https://instagram.com/tr4cestreatz" target="_blank">@tr4cestreatz</a></p>
-                </div>
+            <div class="contact-form">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your name">
+                    </div>
 
-                <div class="contact-card">
-                    <div class="contact-icon">📧</div>
-                    <h3>Enquiries</h3>
-                    <p>Visit our website for details</p>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
+                    </div>
 
-                <div class="contact-card">
-                    <div class="contact-icon">📍</div>
-                    <h3>Location</h3>
-                    <p>Horsham & Western Victoria</p>
-                </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event">Event Type</label>
+                        <input type="text" id="event" name="event" placeholder="e.g., Birthday Party, Market Stall, Corporate Event">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required placeholder="Tell us about your event or enquiry..."></textarea>
+                    </div>
+
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-primary">Send Enquiry</button>
+                        <p class="form-note">We'll get back to you as soon as possible! 🍬</p>
+                    </div>
+                </form>
             </div>
         </section>
     </main>
@@ -1658,6 +1741,16 @@
         window.addEventListener('DOMContentLoaded', () => {
             animateOnScroll();
         });
+
+        // Mock form submission handler
+        const bookingForm = document.getElementById('bookingForm');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your enquiry! 🍬\n\nThis is a demo form. Please contact us via:\n\n📱 Instagram: @tr4cestreatz\n🌐 Website: www.tr4cestreatz.com');
+                bookingForm.reset();
+            });
+        }
     </script>
 </body>
 </html>
