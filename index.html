@@ -980,10 +980,19 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
                 margin-top: 2rem;
+                width: 100%;
             }
 
             .market-card {
                 padding: 2rem 1.5rem;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .market-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
             }
 
             .market-card h3 {
@@ -1012,11 +1021,13 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
                 margin-top: 2rem;
+                width: 100%;
             }
 
             .product-card {
-                max-width: 400px;
-                margin: 0 auto;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
             }
 
             .product-image {
@@ -1050,6 +1061,8 @@
             .about-content {
                 padding: 2rem 1.5rem;
                 margin: 2rem auto 0;
+                width: 100%;
+                max-width: 100%;
             }
 
             .about-content p {
@@ -1069,6 +1082,7 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
                 margin-top: 2rem;
+                width: 100%;
             }
 
             /* Testimonials section */
@@ -1080,10 +1094,13 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
                 margin-top: 2rem;
+                width: 100%;
             }
 
             .testimonial-card {
                 padding: 2rem 1.5rem;
+                width: 100%;
+                max-width: 100%;
             }
 
             .testimonial-quote {
@@ -1097,6 +1114,8 @@
 
             .contact-card {
                 padding: 2rem;
+                width: 100%;
+                max-width: 100%;
             }
 
             .contact-card h3 {
@@ -1156,6 +1175,15 @@
                 min-height: 44px;
                 min-width: 44px;
             }
+
+            /* Hide decorative flourishes on mobile for cleaner look */
+            .market-stall::after,
+            .about::before,
+            .about::after,
+            .products::before,
+            .products::after {
+                display: none;
+            }
         }
 
         /* Tablet adjustments */
@@ -1170,6 +1198,17 @@
 
             .contact-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .market-card,
+            .product-card,
+            .contact-card,
+            .testimonial-card {
+                max-width: 100%;
             }
         }
 
