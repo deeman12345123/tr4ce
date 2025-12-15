@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tr4ces Treatz Bingo - Win Lollies!</title>
+    <style>
+        :root {
+            --primary: #C41E3A; /* Tr4ces Treatz Burgundy */
+            --accent: #FFB81C;  /* Gold */
+            --cream: #FFF8E7;
+            --dark: #3E2723;
+            --daub: rgba(196, 30, 58, 0.7);
+            --win-glow: #FFD700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #f5e6d3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        h1 { 
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            color: var(--dark);
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        button:active { transform: translateY(0); }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-call { background: var(--primary); color: white; }
+        .btn-auto { background: var(--accent); color: #333; }
+        .btn-pause { background: #e74c3c; color: white; }
+
+        /* --- Status Messages --- */
+        .status-msg {
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--dark);
+            font-size: 1.3rem;
+            min-height: 35px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: white;
+            border: 2px solid var(--primary);
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .status-msg.win {
+            background: var(--accent);
+            color: var(--dark);
+            border-color: var(--accent);
+            animation: winPulse 0.5s ease-in-out 3;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* --- Ticket --- */
+        .ticket-wrapper {
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 30px;
+        }
+
+        .ticket {
+            background: white;
+            border: 3px solid var(--dark);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            background: white;
+        }
+
+        /* Vintage Striped Border - like candy shop awning */
+        .ticket::before {
+            content: '';
+            display: block;
+            height: 12px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--primary) 0px,
+                var(--primary) 15px,
+                white 15px,
+                white 30px
+            );
+            border-radius: 6px 6px 0 0;
+            margin: -12px -12px 12px -12px;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .grid-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .cell {
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #bbb;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .cell:hover:not(.empty) {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        .cell.called:not(.marked) {
+            background: #ffffcc;
+            border-color: var(--accent);
+            cursor: pointer;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .cell.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        /* Daub Marker */
+        .cell.marked {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .cell.marked::after {
+            content: '';
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            background-color: var(--daub);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .cell span {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Winning row highlight */
+        .grid-row.winning {
+            animation: rowWin 1s ease-in-out;
+        }
+
+        @keyframes rowWin {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .cell { font-size: 1.2rem; }
+            button { padding: 12px 20px; font-size: 1rem; }
+        }
+
+        @media (max-width: 500px) {
+            .cell { font-size: 1rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍬 Tr4ces Treatz Bingo 🍬</h1>
+        <p class="subtitle">Win a Bag of Lollies! • You vs 50 Players</p>
+    </header>
+
+    <div class="controls">
+        <button class="btn-auto" onclick="toggleAutoCaller()" id="autoBtn">▶️ Start Game</button>
+    </div>
+
+    <div class="status-msg" id="statusMsg">Ready to win lollies! Click "Start Game" 🍬</div>
+
+    <div class="ticket-wrapper">
+        <div class="ticket" id="generatedTicket"></div>
+    </div>
+
+<script>
+    /* ==================== GAME STATE ==================== */
+    let availableNumbers = [];
+    let calledNumbers = [];
+    let currentTicket = null;
+    let autoCallerInterval = null;
+    let isAutoCalling = false;
+    let currentSpeed = 2000; // 2 seconds fixed
+    
+    // AI Opponents
+    let aiOpponents = [];
+    const NUM_AI_OPPONENTS = 50;
+    let fullHouseWinner = null;
+    
+    /* ==================== AUDIO ==================== */
+    function playNumberSound(number) {
+        // Pad single digit numbers with leading zero: 1 -> 01, 2 -> 02, etc.
+        const fileName = number < 10 ? `0${number}` : `${number}`;
+        const audio = new Audio(`bingo/${fileName}.mp3`);
+        audio.volume = 1.0; // Full volume
+        audio.play().catch(err => {
+            // Silently fail if MP3 doesn't exist yet
+            console.log(`Audio bingo/${fileName}.mp3 not found (OK if not downloaded yet)`);
+        });
+    }
+
+    /* ==================== TICKET GENERATION ==================== */
+    const COL_RANGES = [
+        {min: 1, max: 9},
+        {min: 10, max: 19},
+        {min: 20, max: 29},
+        {min: 30, max: 39},
+        {min: 40, max: 49},
+        {min: 50, max: 59},
+        {min: 60, max: 69},
+        {min: 70, max: 79},
+        {min: 80, max: 90}
+    ];
+
+    function generateRandomTicketData() {
+        let layout;
+        let isValid = false;
+
+        // Generate valid layout (5 numbers per row, at least 1 per column)
+        while (!isValid) {
+            layout = [
+                [0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0]
+            ];
+
+            for (let r = 0; r < 3; r++) {
+                let cols = [0,1,2,3,4,5,6,7,8];
+                cols.sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 5; i++) {
+                    layout[r][cols[i]] = 1;
+                }
+            }
+
+            // Validate each column has at least 1 number
+            isValid = true;
+            for (let c = 0; c < 9; c++) {
+                if (layout[0][c] + layout[1][c] + layout[2][c] === 0) {
+                    isValid = false; 
+                    break;
+                }
+            }
+        }
+
+        // Fill with numbers
+        let ticketData = [[], [], []];
+
+        for (let c = 0; c < 9; c++) {
+            let count = layout[0][c] + layout[1][c] + layout[2][c];
+            let nums = [];
+            let range = COL_RANGES[c];
+            
+            while(nums.length < count) {
+                let n = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                if(!nums.includes(n)) nums.push(n);
+            }
+            nums.sort((a,b) => a - b);
+
+            let numIndex = 0;
+            for (let r = 0; r < 3; r++) {
+                if (layout[r][c] === 1) {
+                    ticketData[r][c] = nums[numIndex];
+                    numIndex++;
+                } else {
+                    ticketData[r][c] = 0;
+                }
+            }
+        }
+        return ticketData;
+    }
+
+    /* ==================== DOM MANIPULATION ==================== */
+    function renderTicket(ticketData) {
+        currentTicket = ticketData;
+        const ticketEl = document.getElementById('generatedTicket');
+        ticketEl.innerHTML = '';
+
+        ticketData.forEach((row, rIndex) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'grid-row';
+            rowDiv.dataset.row = rIndex;
+            
+            row.forEach((num, cIndex) => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                
+                if (num === 0) {
+                    cell.classList.add('empty');
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = num;
+                    cell.appendChild(span);
+                    cell.dataset.number = num;
+                    cell.onclick = () => toggleMark(cell);
+                }
+                rowDiv.appendChild(cell);
+            });
+            ticketEl.appendChild(rowDiv);
+        });
+    }
+
+    function toggleMark(cell) {
+        const number = parseInt(cell.dataset.number);
+        
+        // Only allow marking if number has been called
+        if (!calledNumbers.includes(number)) {
+            return; // Do nothing if number hasn't been called
+        }
+        
+        cell.classList.toggle('marked');
+        checkWins();
+    }
+
+    /* ==================== WIN DETECTION ==================== */
+    function markAITickets(number) {
+        // Mark the called number on all AI tickets
+        aiOpponents.forEach(ai => {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (ai.ticket[r][c] === number) {
+                        ai.marked[r][c] = true;
+                    }
+                }
+            }
+        });
+    }
+
+    function checkAIWins() {
+        aiOpponents.forEach(ai => {
+            let linesComplete = 0;
+            
+            // Count complete lines
+            for (let r = 0; r < 3; r++) {
+                let numbersInRow = 0;
+                let markedInRow = 0;
+                
+                for (let c = 0; c < 9; c++) {
+                    if (ai.ticket[r][c] !== 0) {
+                        numbersInRow++;
+                        if (ai.marked[r][c]) {
+                            markedInRow++;
+                        }
+                    }
+                }
+                
+                if (numbersInRow > 0 && numbersInRow === markedInRow) {
+                    linesComplete++;
+                }
+            }
+            
+            ai.linesComplete = linesComplete;
+            
+            // Check for FULL HOUSE only
+            if (!fullHouseWinner && linesComplete === 3) {
+                fullHouseWinner = `Player ${ai.id}`;
+                announceWin('FULL HOUSE', fullHouseWinner);
+                
+                // Stop game and re-enable button
+                clearInterval(autoCallerInterval);
+                isAutoCalling = false;
+                const btn = document.getElementById('autoBtn');
+                btn.textContent = '▶️ New Game';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
+    function announceWin(winType, winner) {
+        const statusEl = document.getElementById('statusMsg');
+        const message = winner === 'YOU' ? 
+            '🎉🍬 FULL HOUSE - YOU WIN THE LOLLIES! 🍬🎉' :
+            `🎊 FULL HOUSE: ${winner} wins the lollies! 🎊`;
+        statusEl.textContent = message;
+        statusEl.className = 'status-msg win';
+        
+        // Play loss sound if AI won
+        if (winner !== 'YOU') {
+            const lossAudio = new Audio('bingo/bingoloss.mp3');
+            lossAudio.volume = 1.0;
+            lossAudio.play().catch(err => {
+                console.log('Loss sound not found (bingo/bingoloss.mp3)');
+            });
+        }
+        
+        console.log(`${winType} won by ${winner}`);
+    }
+
+    function checkWins() {
+        if (!currentTicket) return;
+
+        const rows = document.querySelectorAll('.grid-row');
+        let completedLines = 0;
+
+        rows.forEach((row, index) => {
+            const cells = Array.from(row.querySelectorAll('.cell:not(.empty)'));
+            const markedCells = cells.filter(cell => cell.classList.contains('marked'));
+            
+            if (cells.length > 0 && cells.length === markedCells.length) {
+                completedLines++;
+                row.classList.add('winning');
+            } else {
+                row.classList.remove('winning');
+            }
+        });
+
+        const allCells = Array.from(document.querySelectorAll('.cell:not(.empty)'));
+        const allMarked = allCells.filter(cell => cell.classList.contains('marked'));
+        const isFullHouse = allCells.length === allMarked.length && allCells.length > 0;
+
+        // Check if player won FULL HOUSE
+        if (isFullHouse && !fullHouseWinner) {
+            fullHouseWinner = 'YOU';
+            announceWin('FULL HOUSE', 'YOU');
+            
+            // Stop game and re-enable button
+            clearInterval(autoCallerInterval);
+            isAutoCalling = false;
+            const btn = document.getElementById('autoBtn');
+            btn.textContent = '▶️ New Game';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        }
+    }
+
+    /* ==================== GAME LOGIC ==================== */
+    function resetGame() {
+        // Stop auto caller
+        if (isAutoCalling) {
+            toggleAutoCaller();
+        }
+
+        // Reset state
+        availableNumbers = Array.from({length: 90}, (_, i) => i + 1);
+        calledNumbers = [];
+        fullHouseWinner = null;
+        
+        // Generate AI opponents
+        aiOpponents = [];
+        for (let i = 0; i < NUM_AI_OPPONENTS; i++) {
+            aiOpponents.push({
+                id: i + 1,
+                ticket: generateRandomTicketData(),
+                marked: [[false,false,false,false,false,false,false,false,false],
+                        [false,false,false,false,false,false,false,false,false],
+                        [false,false,false,false,false,false,false,false,false]],
+                linesComplete: 0
+            });
+        }
+        
+        // Reset UI
+        document.getElementById('statusMsg').textContent = `You vs ${NUM_AI_OPPONENTS} players - Win the lollies! 🍬`;
+        document.getElementById('statusMsg').className = 'status-msg';
+        
+        // New ticket for player
+        const newTicket = generateRandomTicketData();
+        renderTicket(newTicket);
+    }
+
+    function callNumber() {
+        if (availableNumbers.length === 0) {
+            const statusEl = document.getElementById('statusMsg');
+            statusEl.textContent = "Game Over! All 90 numbers called 🎰";
+            
+            // Stop game and re-enable button
+            clearInterval(autoCallerInterval);
+            isAutoCalling = false;
+            const btn = document.getElementById('autoBtn');
+            btn.textContent = '▶️ New Game';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+        const number = availableNumbers[randomIndex];
+
+        availableNumbers.splice(randomIndex, 1);
+        calledNumbers.unshift(number);
+        
+        // Play sound
+        playNumberSound(number);
+
+        // Highlight the called number on player's ticket
+        const allCells = document.querySelectorAll('.cell');
+        allCells.forEach(cell => {
+            if (cell.dataset.number && parseInt(cell.dataset.number) === number) {
+                cell.classList.add('called');
+            }
+        });
+
+        // Mark AI tickets
+        markAITickets(number);
+        
+        // Check AI wins FIRST (they're instant)
+        checkAIWins();
+
+        // Update status if not winning
+        const statusEl = document.getElementById('statusMsg');
+        if (!statusEl.classList.contains('win')) {
+            statusEl.textContent = `Called: ${number} | ${availableNumbers.length} remaining`;
+        }
+    }
+
+    /* ==================== AUTO CALLER ==================== */
+    function toggleAutoCaller() {
+        const btn = document.getElementById('autoBtn');
+
+        if (isAutoCalling) {
+            // Already running, do nothing
+            return;
+        }
+        
+        // Check if game is over and needs reset
+        if (availableNumbers.length === 0 || fullHouseWinner) {
+            resetGame();
+        }
+        
+        // Start game
+        if (availableNumbers.length === 0) {
+            resetGame();
+        }
+        
+        isAutoCalling = true;
+        btn.textContent = '⏳ Game Running...';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        
+        callNumber(); // First call immediately
+        autoCallerInterval = setInterval(callNumber, currentSpeed);
+    }
+
+    /* ==================== INITIALIZE ==================== */
+    resetGame();
+
+</script>
+</body>
+</html>
