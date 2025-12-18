@@ -754,6 +754,12 @@
     function startGame() {
         if (!isHost) return;
 
+        // Pre-load audio for host (this is a direct user action)
+        if (Object.keys(preloadedAudio).length === 0) {
+            console.log('🎵 Host: Pre-loading audio...');
+            preloadAllAudio();
+        }
+
         // Generate tickets for all players
         playersRef.once('value').then(snapshot => {
             const players = snapshot.val();
@@ -910,10 +916,18 @@
             statusEl.textContent = `🎊 ${winnerData.name} wins the lollies! 🎊`;
             statusEl.classList.add('win');
             
-            // Play loss sound
-            const audio = new Audio('bingo/bingoloss.mp3');
-            audio.volume = 1.0;
-            audio.play().catch(err => console.log('Sound not found'));
+            // Play loss sound using pre-loaded audio
+            const lossAudio = preloadedAudio['loss'];
+            if (lossAudio) {
+                lossAudio.currentTime = 0;
+                lossAudio.volume = 1.0;
+                lossAudio.play().catch(err => console.log('Loss sound failed:', err));
+            } else {
+                // Fallback
+                const audio = new Audio('bingo/bingoloss.mp3');
+                audio.volume = 1.0;
+                audio.play().catch(err => console.log('Sound not found'));
+            }
         }
     }
 
@@ -1044,6 +1058,29 @@
     let audioUnlocked = false;
     let audioContext = null;
     let unlockAttempts = 0;
+    let preloadedAudio = {}; // Store all audio files
+
+    // Pre-load all audio files
+    function preloadAllAudio() {
+        console.log('🎵 Pre-loading all audio files...');
+        
+        // Load numbers 1-90
+        for (let i = 1; i <= 90; i++) {
+            const paddedNumber = i.toString().padStart(2, '0');
+            const audio = new Audio(`bingo/${paddedNumber}.mp3`);
+            audio.preload = 'auto';
+            audio.volume = 1.0;
+            preloadedAudio[i] = audio;
+        }
+        
+        // Load loss sound
+        const lossAudio = new Audio('bingo/bingoloss.mp3');
+        lossAudio.preload = 'auto';
+        lossAudio.volume = 1.0;
+        preloadedAudio['loss'] = lossAudio;
+        
+        console.log('✅ All audio files pre-loaded!');
+    }
 
     // Player-specific audio unlock with test sound
     function unlockAudioForPlayer() {
@@ -1059,25 +1096,35 @@
             }
         } catch (e) {}
         
-        // Play actual test sound
-        const testAudio = new Audio('bingo/01.mp3');
-        testAudio.volume = 0.5; // Medium volume for test
-        testAudio.play().then(() => {
-            console.log('✅ Audio unlocked! Test sound played.');
-            audioUnlocked = true;
-            
-            // Update waiting message to show success
-            const waitMsg = document.getElementById('waitingMessage');
-            if (waitMsg) {
-                waitMsg.textContent = '✅ Sound enabled • Waiting for host to start...';
-                waitMsg.style.background = '#90EE90';
-                waitMsg.style.cursor = 'default';
-                waitMsg.onclick = null;
-            }
-        }).catch(err => {
-            console.log('❌ Audio still blocked:', err);
-            alert('Audio blocked!\n\nPlease:\n1. Turn volume UP\n2. Take phone off silent\n3. Try tapping again');
-        });
+        // Pre-load all audio files NOW while we have user interaction
+        preloadAllAudio();
+        
+        // Play actual test sound using pre-loaded audio
+        const testAudio = preloadedAudio[1]; // Use pre-loaded audio for number 1
+        if (testAudio) {
+            testAudio.volume = 0.5; // Medium volume for test
+            testAudio.play().then(() => {
+                console.log('✅ Audio unlocked! Test sound played.');
+                audioUnlocked = true;
+                
+                // Reset the test audio for later use
+                testAudio.pause();
+                testAudio.currentTime = 0;
+                testAudio.volume = 1.0;
+                
+                // Update waiting message to show success
+                const waitMsg = document.getElementById('waitingMessage');
+                if (waitMsg) {
+                    waitMsg.textContent = '✅ Sound enabled • Waiting for host to start...';
+                    waitMsg.style.background = '#90EE90';
+                    waitMsg.style.cursor = 'default';
+                    waitMsg.onclick = null;
+                }
+            }).catch(err => {
+                console.log('❌ Audio still blocked:', err);
+                alert('Audio blocked!\n\nPlease:\n1. Turn volume UP\n2. Take phone off silent\n3. Try tapping again');
+            });
+        }
     }
 
     // Aggressive audio unlock
@@ -1116,16 +1163,40 @@
     document.addEventListener('touchend', aggressiveAudioUnlock);
 
     function playNumberSound(number) {
-        const paddedNumber = number.toString().padStart(2, '0');
-        const audio = new Audio(`bingo/${paddedNumber}.mp3`);
-        audio.volume = 1.0;
+        console.log(`🎵 Playing number: ${number}`);
         
-        audio.play().then(() => {
-            console.log(`🎵 ${paddedNumber}.mp3`);
-            audioUnlocked = true;
-        }).catch(() => {
-            console.log(`⚠️ ${paddedNumber}.mp3 blocked`);
-        });
+        // Use pre-loaded audio if available
+        const audio = preloadedAudio[number];
+        
+        if (audio) {
+            // Reset audio to start
+            audio.currentTime = 0;
+            audio.volume = 1.0;
+            
+            audio.play().then(() => {
+                console.log(`✅ Played: ${number}`);
+                audioUnlocked = true;
+            }).catch(err => {
+                console.log(`⚠️ Failed to play ${number}:`, err);
+                
+                // Fallback: try creating new audio
+                const fallbackAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
+                fallbackAudio.volume = 1.0;
+                fallbackAudio.play().catch(() => {
+                    console.log('Fallback also failed');
+                });
+            });
+        } else {
+            // No pre-loaded audio, create new (for host who doesn't tap button)
+            console.log('⚠️ No pre-loaded audio, creating new');
+            const newAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
+            newAudio.volume = 1.0;
+            newAudio.play().then(() => {
+                console.log(`✅ Played: ${number}`);
+            }).catch(err => {
+                console.log(`⚠️ Failed: ${err}`);
+            });
+        }
     }
 
     /* ==================== CLEANUP ==================== */
