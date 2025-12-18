@@ -452,9 +452,6 @@
     <!-- Game Screen: Active gameplay -->
     <div class="game-screen hidden" id="gameScreen">
         <div class="status-msg" id="statusMsg">Get ready...</div>
-        <div style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 10px;" id="audioHint">
-            🔊 Tap screen if you don't hear numbers
-        </div>
         <div class="ticket-wrapper">
             <div class="ticket" id="ticketContainer"></div>
         </div>
@@ -600,6 +597,10 @@
                 joinedAt: firebase.database.ServerValue.TIMESTAMP
             });
         }).then(() => {
+            // Unlock audio immediately when joining
+            console.log('🎮 Joined game - unlocking audio...');
+            aggressiveAudioUnlock();
+            
             setupLobby();
         }).catch(error => {
             console.error("Error joining game:", error);
@@ -610,6 +611,10 @@
     /* ==================== LOBBY SETUP ==================== */
     function setupLobby() {
         document.getElementById('lobbyGameCode').textContent = currentGameCode;
+        
+        // Aggressive audio unlock while in lobby
+        console.log('📍 Entered lobby - unlocking audio...');
+        aggressiveAudioUnlock();
         
         if (isHost) {
             document.getElementById('startGameBtn').classList.remove('hidden');
@@ -623,6 +628,9 @@
         playersRef.on('value', snapshot => {
             const players = snapshot.val() || {};
             updatePlayerList(players);
+            
+            // Try to unlock audio each time player list updates
+            aggressiveAudioUnlock();
         });
 
         // Listen for game status changes
@@ -780,12 +788,6 @@
         const latest = calledNumbers[0];
         const remaining = 90 - calledNumbers.length;
         statusEl.textContent = `Called: ${latest} | ${remaining} remaining`;
-
-        // Hide audio hint after a few numbers called
-        if (calledNumbers.length > 3) {
-            const audioHint = document.getElementById('audioHint');
-            if (audioHint) audioHint.style.display = 'none';
-        }
     }
 
     function announceWinner(winnerData) {
@@ -931,37 +933,66 @@
 
     /* ==================== AUDIO ==================== */
     let audioUnlocked = false;
+    let audioContext = null;
+    let unlockAttempts = 0;
 
-    // Unlock audio on first user interaction (for mobile browsers)
-    function unlockAudio() {
-        if (audioUnlocked) return;
+    // Aggressive audio unlock
+    function aggressiveAudioUnlock() {
+        if (audioUnlocked) return true;
         
+        unlockAttempts++;
+        console.log(`🔊 Audio unlock attempt #${unlockAttempts}`);
+        
+        // Method 1: AudioContext
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        } catch (e) {}
+        
+        // Method 2: Silent audio
         const silentAudio = new Audio();
         silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        silentAudio.volume = 0.01;
+        
         silentAudio.play().then(() => {
+            console.log('✅ Audio unlocked!');
             audioUnlocked = true;
-            console.log('🔊 Audio unlocked for mobile!');
-        }).catch(() => {
-            console.log('Audio still locked');
-        });
+            
+            // Quick test with real sound at low volume
+            setTimeout(() => {
+                const test = new Audio('bingo/01.mp3');
+                test.volume = 0.05;
+                test.play().then(() => {
+                    console.log('✅ Test successful!');
+                    test.pause();
+                }).catch(() => {});
+            }, 50);
+        }).catch(() => {});
+        
+        return audioUnlocked;
     }
 
-    // Try to unlock audio on any click
-    document.addEventListener('click', unlockAudio, { once: false });
-    document.addEventListener('touchstart', unlockAudio, { once: false });
+    // Try on every interaction
+    document.addEventListener('click', aggressiveAudioUnlock);
+    document.addEventListener('touchstart', aggressiveAudioUnlock);
+    document.addEventListener('touchend', aggressiveAudioUnlock);
 
     function playNumberSound(number) {
         const paddedNumber = number.toString().padStart(2, '0');
         const audio = new Audio(`bingo/${paddedNumber}.mp3`);
         audio.volume = 1.0;
         
-        // For mobile: try to play even if not unlocked
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(err => {
-                console.log(`Sound ${paddedNumber}.mp3 - autoplay blocked (tap screen to enable)`);
-            });
-        }
+        audio.play().then(() => {
+            console.log(`🎵 ${paddedNumber}.mp3`);
+            audioUnlocked = true;
+        }).catch(() => {
+            console.log(`⚠️ ${paddedNumber}.mp3 blocked`);
+            aggressiveAudioUnlock();
+        });
     }
 
     /* ==================== CLEANUP ==================== */
