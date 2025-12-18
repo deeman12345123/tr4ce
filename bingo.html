@@ -503,7 +503,7 @@
         </div>
 
         <div class="waiting-message hidden" id="waitingMessage" onclick="unlockAudioForPlayer()" style="cursor: pointer;">
-            🔊 TAP HERE for sound • Waiting for host to start...
+            🔊 TAP HERE for sound (plays music while you wait)
         </div>
 
         <button class="btn hidden" id="startGameBtn" onclick="startGame()">🚀 START GAME</button>
@@ -786,6 +786,13 @@
 
     /* ==================== GAME SCREEN ==================== */
     function loadGameScreen() {
+        // Stop lobby music if it's playing
+        if (lobbyMusic) {
+            lobbyMusic.pause();
+            lobbyMusic.currentTime = 0;
+            console.log('🎵 Lobby music stopped - game starting!');
+        }
+        
         showScreen('gameScreen');
         
         // Generate called numbers board
@@ -1059,6 +1066,7 @@
     let audioContext = null;
     let unlockAttempts = 0;
     let preloadedAudio = {}; // Store all audio files
+    let lobbyMusic = null; // Store lobby music separately
 
     // Pre-load all audio files
     function preloadAllAudio() {
@@ -1079,12 +1087,18 @@
         lossAudio.volume = 1.0;
         preloadedAudio['loss'] = lossAudio;
         
+        // Load lobby/start music
+        lobbyMusic = new Audio('bingo/startmusic.mp3');
+        lobbyMusic.preload = 'auto';
+        lobbyMusic.volume = 0.7; // Slightly lower volume for background music
+        lobbyMusic.loop = true; // Loop while waiting
+        
         console.log('✅ All audio files pre-loaded!');
     }
 
-    // Player-specific audio unlock with test sound
+    // Player-specific audio unlock with lobby music
     function unlockAudioForPlayer() {
-        console.log('🔊 Player tapped - unlocking audio with test...');
+        console.log('🔊 Player tapped - unlocking audio with lobby music...');
         
         // AudioContext
         try {
@@ -1099,23 +1113,16 @@
         // Pre-load all audio files NOW while we have user interaction
         preloadAllAudio();
         
-        // Play actual test sound using pre-loaded audio
-        const testAudio = preloadedAudio[1]; // Use pre-loaded audio for number 1
-        if (testAudio) {
-            testAudio.volume = 0.5; // Medium volume for test
-            testAudio.play().then(() => {
-                console.log('✅ Audio unlocked! Test sound played.');
+        // Play lobby music (looping)
+        if (lobbyMusic) {
+            lobbyMusic.play().then(() => {
+                console.log('✅ Audio unlocked! Lobby music playing.');
                 audioUnlocked = true;
-                
-                // Reset the test audio for later use
-                testAudio.pause();
-                testAudio.currentTime = 0;
-                testAudio.volume = 1.0;
                 
                 // Update waiting message to show success
                 const waitMsg = document.getElementById('waitingMessage');
                 if (waitMsg) {
-                    waitMsg.textContent = '✅ Sound enabled • Waiting for host to start...';
+                    waitMsg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
                     waitMsg.style.background = '#90EE90';
                     waitMsg.style.cursor = 'default';
                     waitMsg.onclick = null;
