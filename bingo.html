@@ -590,6 +590,7 @@
         const paddedNumber = String(number).padStart(2, '0');
         mainAudio.src = `bingo/${paddedNumber}.mp3`;
         mainAudio.volume = 1.0;
+        mainAudio.playbackRate = 0.8; // Slow down to 80% speed
         
         mainAudio.play().then(() => {
             console.log(`✅ PLAY: ${number} SUCCESS`);
@@ -812,7 +813,7 @@
         });
 
         if (isHost) {
-            setTimeout(autoCallNumber, 2000);
+            setTimeout(autoCallNumber, 3000); // 3 seconds before first call
         }
     }
 
@@ -841,7 +842,7 @@
 
                 gameRef.child('winner').once('value').then(winnerSnapshot => {
                     if (!winnerSnapshot.exists()) {
-                        setTimeout(autoCallNumber, 2000);
+                        setTimeout(autoCallNumber, 3000); // 3 seconds between calls
                     }
                 });
             });
