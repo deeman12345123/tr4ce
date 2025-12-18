@@ -9,17 +9,6 @@
             --primary: #C41E3A;
             --accent: #FFB81C;
             --cream: #FFF8E7;
-            --dark: #3E2723;<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tr4ces Treatz Multiplayer Bingo</title>
-    <style>
-        :root {
-            --primary: #C41E3A;
-            --accent: #FFB81C;
-            --cream: #FFF8E7;
             --dark: #3E2723;
         }
 
@@ -265,6 +254,7 @@
             color: var(--dark);
             font-size: 1.1rem;
             margin-bottom: 20px;
+            cursor: pointer;
         }
 
         /* Game Screen */
@@ -509,11 +499,7 @@
             <div id="playerListContainer"></div>
         </div>
 
-        <div class="hidden" style="text-align: center; padding: 10px; background: #FFF8E7; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #666;" id="soundTip">
-            💡 Tell players to tap the yellow message for sound
-        </div>
-
-        <div class="waiting-message hidden" id="waitingMessage" onclick="unlockAudioForPlayer()" style="cursor: pointer;">
+        <div class="waiting-message hidden" id="waitingMessage" onclick="unlockAudio()">
             🔊 TAP HERE for sound (plays music while you wait)
         </div>
 
@@ -568,20 +554,11 @@
         projectId: "tr4ces-treatz-bingo",
         storageBucket: "tr4ces-treatz-bingo.firebasestorage.app",
         messagingSenderId: "755718258054",
-        appId: "1:755718258054:web:5613f7a71581b1ac460007",
-        measurementId: "G-GL65FXCJC3"
+        appId: "1:755718258054:web:5613f7a71581b1ac460007"
     };
 
-    // Initialize Firebase
-    let app, database;
-    try {
-        app = firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
-        console.log("✅ Firebase connected successfully!");
-    } catch (error) {
-        console.error("❌ Firebase initialization error:", error);
-        alert("Firebase connection failed! Check console for details.");
-    }
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
     /* ==================== GAME STATE ==================== */
     let currentGameCode = null;
@@ -591,7 +568,65 @@
     let currentTicket = null;
     let gameRef = null;
     let playersRef = null;
-    let lastPlayedNumber = null; // Track last number we played sound for
+    let lastPlayedNumber = null;
+
+    /* ==================== AUDIO ==================== */
+    let preloadedAudio = {};
+    let lobbyMusic = null;
+
+    function preloadAllAudio() {
+        // Load numbers 1-90
+        for (let i = 1; i <= 90; i++) {
+            const audio = new Audio(`bingo/${String(i).padStart(2, '0')}.mp3`);
+            audio.preload = 'auto';
+            preloadedAudio[i] = audio;
+        }
+        
+        // Load loss sound
+        preloadedAudio['loss'] = new Audio('bingo/bingoloss.mp3');
+        preloadedAudio['loss'].preload = 'auto';
+        
+        // Load lobby music
+        lobbyMusic = new Audio('bingo/startmusic.mp3');
+        lobbyMusic.preload = 'auto';
+        lobbyMusic.volume = 0.7;
+        lobbyMusic.loop = true;
+        
+        console.log('✅ All audio pre-loaded');
+    }
+
+    function unlockAudio() {
+        console.log('🔊 Unlocking audio...');
+        
+        preloadAllAudio();
+        
+        if (lobbyMusic) {
+            lobbyMusic.play().then(() => {
+                console.log('✅ Lobby music playing');
+                const msg = document.getElementById('waitingMessage');
+                if (msg) {
+                    msg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
+                    msg.style.background = '#90EE90';
+                    msg.onclick = null;
+                }
+            }).catch(err => {
+                console.log('❌ Audio blocked:', err);
+                alert('Audio blocked! Turn volume UP and take phone off silent, then try again.');
+            });
+        }
+    }
+
+    function playNumberSound(number) {
+        const audio = preloadedAudio[number];
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().then(() => {
+                console.log(`✅ Played: ${number}`);
+            }).catch(err => {
+                console.log(`⚠️ Failed: ${number}`);
+            });
+        }
+    }
 
     /* ==================== SCREEN NAVIGATION ==================== */
     function showScreen(screenId) {
@@ -602,10 +637,8 @@
     }
 
     function showCreateScreen() {
-        // Generate random 4-digit code
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        document.getElementById('displayGameCode').textContent = code;
-        currentGameCode = code;
+        currentGameCode = Math.floor(1000 + Math.random() * 9000).toString();
+        document.getElementById('displayGameCode').textContent = currentGameCode;
         showScreen('createScreen');
     }
 
@@ -629,7 +662,6 @@
         currentPlayerId = 'player_' + Date.now();
         isHost = true;
 
-        // Create game in Firebase
         gameRef = database.ref('games/' + currentGameCode);
         playersRef = gameRef.child('players');
 
@@ -639,7 +671,6 @@
             status: 'lobby',
             createdAt: firebase.database.ServerValue.TIMESTAMP
         }).then(() => {
-            // Add host as first player
             return playersRef.child(currentPlayerId).set({
                 name: playerName,
                 isHost: true,
@@ -647,9 +678,6 @@
             });
         }).then(() => {
             setupLobby();
-        }).catch(error => {
-            console.error("Error creating game:", error);
-            alert("Error creating game. Please try again.");
         });
     }
 
@@ -673,7 +701,6 @@
         currentPlayerId = 'player_' + Date.now();
         isHost = false;
 
-        // Check if game exists
         gameRef = database.ref('games/' + currentGameCode);
         playersRef = gameRef.child('players');
 
@@ -689,21 +716,13 @@
                 return;
             }
 
-            // Add player to game
             return playersRef.child(currentPlayerId).set({
                 name: playerName,
                 isHost: false,
                 joinedAt: firebase.database.ServerValue.TIMESTAMP
             });
         }).then(() => {
-            // Unlock audio immediately when joining
-            console.log('🎮 Joined game - unlocking audio...');
-            aggressiveAudioUnlock();
-            
             setupLobby();
-        }).catch(error => {
-            console.error("Error joining game:", error);
-            alert("Error joining game. Please try again.");
         });
     }
 
@@ -711,32 +730,19 @@
     function setupLobby() {
         document.getElementById('lobbyGameCode').textContent = currentGameCode;
         
-        // Aggressive audio unlock while in lobby
-        console.log('📍 Entered lobby - unlocking audio...');
-        aggressiveAudioUnlock();
-        
-        const soundTip = document.getElementById('soundTip');
-        
         if (isHost) {
             document.getElementById('startGameBtn').classList.remove('hidden');
             document.getElementById('waitingMessage').classList.add('hidden');
-            if (soundTip) soundTip.classList.remove('hidden');
         } else {
             document.getElementById('startGameBtn').classList.add('hidden');
             document.getElementById('waitingMessage').classList.remove('hidden');
-            if (soundTip) soundTip.classList.add('hidden');
         }
 
-        // Listen for player changes
         playersRef.on('value', snapshot => {
             const players = snapshot.val() || {};
             updatePlayerList(players);
-            
-            // Try to unlock audio each time player list updates
-            aggressiveAudioUnlock();
         });
 
-        // Listen for game status changes
         gameRef.child('status').on('value', snapshot => {
             const status = snapshot.val();
             if (status === 'playing') {
@@ -749,8 +755,7 @@
 
     function updatePlayerList(players) {
         const container = document.getElementById('playerListContainer');
-        const count = Object.keys(players).length;
-        document.getElementById('playerCount').textContent = count;
+        document.getElementById('playerCount').textContent = Object.keys(players).length;
 
         container.innerHTML = '';
         Object.entries(players).forEach(([id, player]) => {
@@ -766,12 +771,10 @@
             playersRef.child(currentPlayerId).remove();
         }
         
-        // If host leaves, delete game
         if (isHost && gameRef) {
             gameRef.remove();
         }
 
-        // Reset
         currentGameCode = null;
         currentPlayerId = null;
         isHost = false;
@@ -783,13 +786,11 @@
     function startGame() {
         if (!isHost) return;
 
-        // Pre-load audio for host (this is a direct user action)
+        // Pre-load audio for host
         if (Object.keys(preloadedAudio).length === 0) {
-            console.log('🎵 Host: Pre-loading audio...');
             preloadAllAudio();
         }
 
-        // Generate tickets for all players
         playersRef.once('value').then(snapshot => {
             const players = snapshot.val();
             const updates = {};
@@ -798,59 +799,41 @@
                 updates[`players/${playerId}/ticket`] = generateRandomTicketData();
             });
 
-            // Initialize game state
             updates['status'] = 'playing';
             updates['availableNumbers'] = Array.from({length: 90}, (_, i) => i + 1);
             updates['calledNumbers'] = [];
             updates['startedAt'] = firebase.database.ServerValue.TIMESTAMP;
 
             return gameRef.update(updates);
-        }).then(() => {
-            console.log("Game started!");
-        }).catch(error => {
-            console.error("Error starting game:", error);
-            alert("Error starting game. Please try again.");
         });
     }
 
     /* ==================== GAME SCREEN ==================== */
     function loadGameScreen() {
-        // Reset tracking for new game
         lastPlayedNumber = null;
         
-        // Stop lobby music if it's playing
         if (lobbyMusic) {
             lobbyMusic.pause();
             lobbyMusic.currentTime = 0;
-            console.log('🎵 Lobby music stopped - game starting!');
         }
         
         showScreen('gameScreen');
-        
-        // Generate called numbers board
         generateCalledNumbersBoard();
         
-        // Get player's ticket
         playersRef.child(currentPlayerId + '/ticket').once('value').then(snapshot => {
             currentTicket = snapshot.val();
             renderTicket(currentTicket);
         });
 
-        // Listen for called numbers
         gameRef.child('calledNumbers').on('value', snapshot => {
-            const called = snapshot.val() || [];
-            updateCalledNumbers(called);
+            updateCalledNumbers(snapshot.val() || []);
         });
 
-        // Listen for winner
         gameRef.child('winner').on('value', snapshot => {
             const winner = snapshot.val();
-            if (winner) {
-                announceWinner(winner);
-            }
+            if (winner) announceWinner(winner);
         });
 
-        // Start auto-caller if host
         if (isHost) {
             setTimeout(autoCallNumber, 2000);
         }
@@ -861,74 +844,43 @@
 
         gameRef.child('availableNumbers').once('value').then(snapshot => {
             const available = snapshot.val();
-            if (!available || available.length === 0) {
-                const statusEl = document.getElementById('statusMsg');
-                statusEl.style.display = 'block';
-                statusEl.textContent = "Game Over! All numbers called 🎰";
-                return;
-            }
+            if (!available || available.length === 0) return;
 
-            // Pick random number
             const randomIndex = Math.floor(Math.random() * available.length);
             const number = available[randomIndex];
-
-            // Remove from available
             available.splice(randomIndex, 1);
 
-            // Add to called
             gameRef.child('calledNumbers').once('value').then(calledSnapshot => {
                 const called = calledSnapshot.val() || [];
                 called.unshift(number);
 
-                // Update database
                 return gameRef.update({
                     availableNumbers: available,
-                    calledNumbers: called,
-                    currentNumber: number
+                    calledNumbers: called
                 });
             }).then(() => {
-                // Play sound and track it to prevent double-play
                 lastPlayedNumber = number;
                 playNumberSound(number);
 
-                // Schedule next call
                 gameRef.child('winner').once('value').then(winnerSnapshot => {
                     if (!winnerSnapshot.exists()) {
                         setTimeout(autoCallNumber, 2000);
                     }
                 });
             });
-        }).catch(error => {
-            console.error("Error calling number:", error);
         });
     }
 
-    /* ==================== CALLED NUMBERS BOARD ==================== */
     function generateCalledNumbersBoard() {
         const board = document.getElementById('calledNumbersBoard');
         board.innerHTML = '';
         
-        // Generate all 90 numbers
         for (let i = 1; i <= 90; i++) {
-            const numberDiv = document.createElement('div');
-            numberDiv.className = 'called-number';
-            numberDiv.textContent = i;
-            numberDiv.dataset.number = i;
-            board.appendChild(numberDiv);
-        }
-    }
-
-    function updateCalledNumbersBoard(calledNumbers) {
-        // Highlight all called numbers
-        for (let i = 1; i <= 90; i++) {
-            const numberDiv = document.querySelector(`.called-number[data-number="${i}"]`);
-            if (numberDiv) {
-                if (calledNumbers.includes(i)) {
-                    numberDiv.classList.add('called');
-                } else {
-                    numberDiv.classList.remove('called');
-                }
-            }
+            const div = document.createElement('div');
+            div.className = 'called-number';
+            div.textContent = i;
+            div.dataset.number = i;
+            board.appendChild(div);
         }
     }
 
@@ -939,1233 +891,35 @@
             return;
         }
 
-        const latest = calledNumbers[0]; // Most recent number (Firebase adds to front)
+        const latest = calledNumbers[0];
         const remaining = 90 - calledNumbers.length;
         
-        // Update displays
         document.getElementById('lastCalledDisplay').textContent = latest;
         document.getElementById('remainingDisplay').textContent = remaining;
         
-        // CRITICAL FIX: Play sound for joiners when they receive new number from Firebase
+        // Play sound for all players when new number detected
         if (latest !== lastPlayedNumber) {
-            console.log(`🎵 New number detected: ${latest} (playing sound for all players)`);
+            console.log(`🎵 New number: ${latest}`);
             playNumberSound(latest);
             lastPlayedNumber = latest;
         }
         
-        // Update the board
-        updateCalledNumbersBoard(calledNumbers);
-    }
-
-    function announceWinner(winnerData) {
-        const statusEl = document.getElementById('statusMsg');
-        statusEl.style.display = 'block'; // Show winner message
-        const isMe = winnerData.id === currentPlayerId;
-        
-        if (isMe) {
-            statusEl.textContent = `🎉🍬 ${winnerData.name.toUpperCase()} WINS THE LOLLIES! 🍬🎉`;
-            statusEl.classList.add('win');
-        } else {
-            statusEl.textContent = `🎊 ${winnerData.name} wins the lollies! 🎊`;
-            statusEl.classList.add('win');
-            
-            // Play loss sound using pre-loaded audio
-            const lossAudio = preloadedAudio['loss'];
-            if (lossAudio) {
-                lossAudio.currentTime = 0;
-                lossAudio.volume = 1.0;
-                lossAudio.play().catch(err => console.log('Loss sound failed:', err));
-            } else {
-                // Fallback
-                const audio = new Audio('bingo/bingoloss.mp3');
-                audio.volume = 1.0;
-                audio.play().catch(err => console.log('Sound not found'));
-            }
-        }
-    }
-
-    /* ==================== TICKET RENDERING ==================== */
-    function generateRandomTicketData() {
-        const ticket = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
-        const numbersPerRow = 5;
-        
-        for (let col = 0; col < 9; col++) {
-            const min = col === 0 ? 1 : col * 10;
-            const max = col === 8 ? 90 : (col + 1) * 10 - 1;
-            const range = max - min + 1;
-            const available = Array.from({length: range}, (_, i) => min + i);
-            
-            const numsInCol = Math.min(3, Math.max(1, Math.floor(Math.random() * 3) + 1));
-            const rows = [0, 1, 2].sort(() => Math.random() - 0.5).slice(0, numsInCol);
-            
-            rows.forEach(row => {
-                const idx = Math.floor(Math.random() * available.length);
-                ticket[row][col] = available[idx];
-                available.splice(idx, 1);
-            });
-        }
-        
-        for (let row = 0; row < 3; row++) {
-            const nonZero = ticket[row].filter(n => n !== 0);
-            if (nonZero.length < numbersPerRow) {
-                const needed = numbersPerRow - nonZero.length;
-                const zeroCols = ticket[row].map((val, idx) => val === 0 ? idx : -1).filter(i => i !== -1);
-                for (let i = 0; i < needed && zeroCols.length > 0; i++) {
-                    const colIdx = zeroCols[Math.floor(Math.random() * zeroCols.length)];
-                    const min = colIdx === 0 ? 1 : colIdx * 10;
-                    const max = colIdx === 8 ? 90 : (colIdx + 1) * 10 - 1;
-                    ticket[row][colIdx] = min + Math.floor(Math.random() * (max - min + 1));
-                    zeroCols.splice(zeroCols.indexOf(colIdx), 1);
-                }
-            }
-        }
-        
-        for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < 9; col++) {
-                if (ticket[row][col] !== 0) {
-                    for (let r2 = row + 1; r2 < 3; r2++) {
-                        if (ticket[r2][col] !== 0 && ticket[r2][col] < ticket[row][col]) {
-                            [ticket[row][col], ticket[r2][col]] = [ticket[r2][col], ticket[row][col]];
-                        }
-                    }
-                }
-            }
-        }
-        
-        return ticket;
-    }
-
-    function renderTicket(ticketData) {
-        const container = document.getElementById('ticketContainer');
-        container.innerHTML = '<div class="grid"></div>';
-        const grid = container.querySelector('.grid');
-        
-        for (let row = 0; row < 3; row++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'grid-row';
-            
-            for (let col = 0; col < 9; col++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                const number = ticketData[row][col];
-                
-                if (number === 0) {
-                    cell.classList.add('empty');
-                } else {
-                    cell.textContent = number;
-                    cell.dataset.number = number;
-                    cell.onclick = () => toggleMark(cell);
-                }
-                
-                grid.appendChild(cell);
-            }
-        }
-    }
-
-    function toggleMark(cell) {
-        // Allow marking any number
-        cell.classList.toggle('marked');
-        checkWin();
-    }
-
-    function checkWin() {
-        if (!currentTicket) return;
-
-        const rows = document.querySelectorAll('.grid-row');
-        let completedLines = 0;
-
-        rows.forEach((row, index) => {
-            const cells = Array.from(row.querySelectorAll('.cell:not(.empty)'));
-            const markedCells = cells.filter(cell => cell.classList.contains('marked'));
-            
-            if (cells.length > 0 && cells.length === markedCells.length) {
-                completedLines++;
-                row.classList.add('winning');
-            } else {
-                row.classList.remove('winning');
-            }
-        });
-
-        const allCells = Array.from(document.querySelectorAll('.cell:not(.empty)'));
-        const allMarked = allCells.filter(cell => cell.classList.contains('marked'));
-        const isFullHouse = allCells.length === allMarked.length && allCells.length > 0;
-
-        if (isFullHouse) {
-            // Check if already has winner
-            gameRef.child('winner').once('value').then(snapshot => {
-                if (!snapshot.exists()) {
-                    // You won!
-                    gameRef.update({
-                        winner: {
-                            id: currentPlayerId,
-                            name: playerName,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    /* ==================== AUDIO ==================== */
-    let audioUnlocked = false;
-    let audioContext = null;
-    let unlockAttempts = 0;
-    let preloadedAudio = {}; // Store all audio files
-    let lobbyMusic = null; // Store lobby music separately
-
-    // Pre-load all audio files
-    function preloadAllAudio() {
-        console.log('🎵 Pre-loading all audio files...');
-        
-        // Load numbers 1-90
+        // Update board
         for (let i = 1; i <= 90; i++) {
-            const paddedNumber = i.toString().padStart(2, '0');
-            const audio = new Audio(`bingo/${paddedNumber}.mp3`);
-            audio.preload = 'auto';
-            audio.volume = 1.0;
-            preloadedAudio[i] = audio;
-        }
-        
-        // Load loss sound
-        const lossAudio = new Audio('bingo/bingoloss.mp3');
-        lossAudio.preload = 'auto';
-        lossAudio.volume = 1.0;
-        preloadedAudio['loss'] = lossAudio;
-        
-        // Load lobby/start music
-        lobbyMusic = new Audio('bingo/startmusic.mp3');
-        lobbyMusic.preload = 'auto';
-        lobbyMusic.volume = 0.7; // Slightly lower volume for background music
-        lobbyMusic.loop = true; // Loop while waiting
-        
-        console.log('✅ All audio files pre-loaded!');
-    }
-
-    // Player-specific audio unlock with lobby music
-    function unlockAudioForPlayer() {
-        console.log('🔊 Player tapped - unlocking audio with lobby music...');
-        
-        // AudioContext
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        } catch (e) {}
-        
-        // Pre-load all audio files NOW while we have user interaction
-        preloadAllAudio();
-        
-        // Play lobby music (looping)
-        if (lobbyMusic) {
-            lobbyMusic.play().then(() => {
-                console.log('✅ Audio unlocked! Lobby music playing.');
-                audioUnlocked = true;
-                
-                // Update waiting message to show success
-                const waitMsg = document.getElementById('waitingMessage');
-                if (waitMsg) {
-                    waitMsg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
-                    waitMsg.style.background = '#90EE90';
-                    waitMsg.style.cursor = 'default';
-                    waitMsg.onclick = null;
-                }
-            }).catch(err => {
-                console.log('❌ Audio still blocked:', err);
-                alert('Audio blocked!\n\nPlease:\n1. Turn volume UP\n2. Take phone off silent\n3. Try tapping again');
-            });
-        }
-    }
-
-    // Aggressive audio unlock
-    function aggressiveAudioUnlock() {
-        if (audioUnlocked) return true;
-        
-        unlockAttempts++;
-        console.log(`🔊 Audio unlock attempt #${unlockAttempts}`);
-        
-        // AudioContext
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        } catch (e) {}
-        
-        // Silent audio
-        const silentAudio = new Audio();
-        silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-        silentAudio.volume = 0.01;
-        
-        silentAudio.play().then(() => {
-            console.log('✅ Audio unlocked!');
-            audioUnlocked = true;
-        }).catch(() => {});
-        
-        return audioUnlocked;
-    }
-
-    // Try on every interaction
-    document.addEventListener('click', aggressiveAudioUnlock);
-    document.addEventListener('touchstart', aggressiveAudioUnlock);
-    document.addEventListener('touchend', aggressiveAudioUnlock);
-
-    function playNumberSound(number) {
-        console.log(`🎵 Playing number: ${number}`);
-        
-        // Use pre-loaded audio if available
-        const audio = preloadedAudio[number];
-        
-        if (audio) {
-            // Reset audio to start
-            audio.currentTime = 0;
-            audio.volume = 1.0;
-            
-            audio.play().then(() => {
-                console.log(`✅ Played: ${number}`);
-                audioUnlocked = true;
-            }).catch(err => {
-                console.log(`⚠️ Failed to play ${number}:`, err);
-                
-                // Fallback: try creating new audio
-                const fallbackAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
-                fallbackAudio.volume = 1.0;
-                fallbackAudio.play().catch(() => {
-                    console.log('Fallback also failed');
-                });
-            });
-        } else {
-            // No pre-loaded audio, create new (for host who doesn't tap button)
-            console.log('⚠️ No pre-loaded audio, creating new');
-            const newAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
-            newAudio.volume = 1.0;
-            newAudio.play().then(() => {
-                console.log(`✅ Played: ${number}`);
-            }).catch(err => {
-                console.log(`⚠️ Failed: ${err}`);
-            });
-        }
-    }
-
-    /* ==================== CLEANUP ==================== */
-    window.addEventListener('beforeunload', () => {
-        if (currentPlayerId && playersRef) {
-            playersRef.child(currentPlayerId).remove();
-        }
-    });
-
-</script>
-</body>
-</html>
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, #f5e6d3 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-        
-        h1 { 
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            color: var(--primary);
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            color: var(--dark);
-        }
-
-        /* Choice Screen */
-        .choice-screen {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            border: 3px solid var(--primary);
-        }
-
-        .choice-screen h2 {
-            color: var(--primary);
-            margin-bottom: 30px;
-            font-size: 1.8rem;
-        }
-
-        .choice-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .choice-btn {
-            padding: 25px;
-            font-size: 1.4rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
-        }
-
-        .choice-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-        }
-
-        .choice-btn.join {
-            background: var(--accent);
-            color: var(--dark);
-        }
-
-        /* Join/Create Screen */
-        .setup-screen {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            max-width: 500px;
-            width: 100%;
-            border: 3px solid var(--primary);
-        }
-
-        .setup-screen h2 {
-            color: var(--primary);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            background: var(--cream);
-            text-transform: uppercase;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
-        }
-
-        .game-code-display {
-            background: var(--cream);
-            padding: 20px;
-            border-radius: 10px;
-            border: 3px solid var(--accent);
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .game-code-display .label {
-            font-size: 0.9rem;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .game-code-display .code {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            letter-spacing: 3px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 18px;
-            font-size: 1.2rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
-            margin-top: 10px;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #666;
-            margin-top: 15px;
-        }
-
-        /* Lobby Screen */
-        .lobby-screen {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            max-width: 600px;
-            width: 100%;
-            border: 3px solid var(--primary);
-        }
-
-        .lobby-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .lobby-header h2 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .player-list {
-            background: var(--cream);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .player-list h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .player-item {
-            padding: 12px;
-            background: white;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            border: 2px solid var(--accent);
-            font-size: 1.1rem;
-            color: var(--dark);
-        }
-
-        .player-item.you {
-            border-color: var(--primary);
-            font-weight: bold;
-        }
-
-        .waiting-message {
-            text-align: center;
-            padding: 20px;
-            background: #fffacd;
-            border-radius: 10px;
-            color: var(--dark);
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-        }
-
-        /* Game Screen */
-        .game-screen {
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .status-msg {
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: var(--dark);
-            font-size: 1.3rem;
-            text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            background: white;
-            border: 2px solid var(--primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .status-msg.win {
-            background: var(--accent);
-            color: var(--dark);
-            border-color: var(--accent);
-            animation: winPulse 0.5s ease-in-out 3;
-        }
-
-        @keyframes winPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Called Numbers Board */
-        .called-board {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border: 2px solid var(--primary);
-        }
-
-        .called-board h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1.3rem;
-        }
-
-        .called-numbers-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .called-number {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: bold;
-            background: #f0f0f0;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            color: #999;
-        }
-
-        .called-number.called {
-            background: var(--accent);
-            border-color: var(--primary);
-            color: var(--dark);
-            animation: numberCalled 0.3s ease-out;
-        }
-
-        @keyframes numberCalled {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Ticket */
-        .ticket-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .ticket {
-            background: white;
-            border: 3px solid var(--dark);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .ticket::before {
-            content: '';
-            display: block;
-            height: 12px;
-            background: repeating-linear-gradient(
-                90deg,
-                var(--primary) 0px,
-                var(--primary) 15px,
-                white 15px,
-                white 30px
-            );
-            border-radius: 6px 6px 0 0;
-            margin: -12px -12px 12px -12px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            gap: 4px;
-        }
-
-        .grid-row {
-            display: contents;
-        }
-
-        .grid-row.winning .cell:not(.empty) {
-            background: #90EE90;
-            border-color: #228B22;
-        }
-
-        .cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            background: white;
-            border: 2px solid #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            color: var(--dark);
-        }
-
-        .cell:hover:not(.empty) {
-            background: #f0f0f0;
-            transform: scale(1.05);
-        }
-
-        .cell.empty {
-            background: transparent;
-            border: none;
-            cursor: default;
-        }
-
-        .cell.marked::after {
-            content: '';
-            position: absolute;
-            width: 70%;
-            height: 70%;
-            background: radial-gradient(circle, rgba(196, 30, 58, 0.8), rgba(196, 30, 58, 0.6));
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .cell { font-size: 1.2rem; }
-            .choice-btn, .btn { padding: 15px; font-size: 1.1rem; }
-            .called-number { font-size: 0.85rem; }
-            .ticket { padding: 10px; }
-        }
-
-        @media (max-width: 500px) {
-            .cell { font-size: 1rem; }
-            .called-numbers-grid { gap: 4px; }
-            .called-number { font-size: 0.75rem; }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>🍬 Tr4ces Treatz Bingo 🍬</h1>
-        <p class="subtitle">Multiplayer • Win a Bag of Lollies!</p>
-    </header>
-
-    <!-- Choice Screen: Create or Join -->
-    <div class="choice-screen" id="choiceScreen">
-        <h2>Welcome!</h2>
-        <div class="choice-buttons">
-            <button class="choice-btn" onclick="showCreateScreen()">🎮 Create New Game</button>
-            <button class="choice-btn join" onclick="showJoinScreen()">🎯 Join Existing Game</button>
-        </div>
-    </div>
-
-    <!-- Create Game Screen -->
-    <div class="setup-screen hidden" id="createScreen">
-        <h2>Create New Game</h2>
-        <div class="game-code-display">
-            <div class="label">Your Game Code:</div>
-            <div class="code" id="displayGameCode">----</div>
-        </div>
-        <div class="input-group">
-            <label for="hostName">Your Name:</label>
-            <input type="text" id="hostName" placeholder="Enter your name" maxlength="20">
-        </div>
-        <button class="btn" onclick="createGame()">Create Game</button>
-        <button class="btn btn-secondary" onclick="backToChoice()">← Back</button>
-    </div>
-
-    <!-- Join Game Screen -->
-    <div class="setup-screen hidden" id="joinScreen">
-        <h2>Join Game</h2>
-        <div class="input-group">
-            <label for="joinCode">Game Code:</label>
-            <input type="text" id="joinCode" placeholder="Enter 4-digit code" maxlength="4">
-        </div>
-        <div class="input-group">
-            <label for="playerName">Your Name:</label>
-            <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
-        </div>
-        <button class="btn" onclick="joinGame()">Join Game</button>
-        <button class="btn btn-secondary" onclick="backToChoice()">← Back</button>
-    </div>
-
-    <!-- Lobby Screen: Waiting for players -->
-    <div class="lobby-screen hidden" id="lobbyScreen">
-        <div class="lobby-header">
-            <h2>Game Lobby</h2>
-            <div class="game-code-display">
-                <div class="label">Game Code:</div>
-                <div class="code" id="lobbyGameCode">----</div>
-            </div>
-        </div>
-
-        <div class="player-list">
-            <h3>Players Joined: <span id="playerCount">0</span></h3>
-            <div id="playerListContainer"></div>
-        </div>
-
-        <div class="hidden" style="text-align: center; padding: 10px; background: #FFF8E7; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #666;" id="soundTip">
-            💡 Tell players to tap the yellow message for sound
-        </div>
-
-        <div class="waiting-message hidden" id="waitingMessage" onclick="unlockAudioForPlayer()" style="cursor: pointer;">
-            🔊 TAP HERE for sound (plays music while you wait)
-        </div>
-
-        <button class="btn hidden" id="startGameBtn" onclick="startGame()">🚀 START GAME</button>
-        <button class="btn btn-secondary" onclick="leaveGame()">← Leave Game</button>
-    </div>
-
-    <!-- Game Screen: Active gameplay -->
-    <div class="game-screen hidden" id="gameScreen">
-        <div class="status-msg" id="statusMsg">Get ready...</div>
-        
-        <!-- Called Numbers Board -->
-        <div class="called-board">
-            <h3>Numbers Called</h3>
-            <div class="called-numbers-grid" id="calledNumbersBoard">
-                <!-- Numbers 1-90 will be generated here -->
-            </div>
-        </div>
-        
-        <div class="ticket-wrapper">
-            <div class="ticket" id="ticketContainer"></div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-    <script>
-    /* ==================== FIREBASE CONFIG ==================== */
-    const firebaseConfig = {
-        apiKey: "AIzaSyD5pSXhDv9jzQNIYWhNRdOVt2VR2kWYr-4",
-        authDomain: "tr4ces-treatz-bingo.firebaseapp.com",
-        databaseURL: "https://tr4ces-treatz-bingo-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "tr4ces-treatz-bingo",
-        storageBucket: "tr4ces-treatz-bingo.firebasestorage.app",
-        messagingSenderId: "755718258054",
-        appId: "1:755718258054:web:5613f7a71581b1ac460007",
-        measurementId: "G-GL65FXCJC3"
-    };
-
-    // Initialize Firebase
-    let app, database;
-    try {
-        app = firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
-        console.log("✅ Firebase connected successfully!");
-    } catch (error) {
-        console.error("❌ Firebase initialization error:", error);
-        alert("Firebase connection failed! Check console for details.");
-    }
-
-    /* ==================== GAME STATE ==================== */
-    let currentGameCode = null;
-    let currentPlayerId = null;
-    let playerName = '';
-    let isHost = false;
-    let currentTicket = null;
-    let gameRef = null;
-    let playersRef = null;
-
-    /* ==================== SCREEN NAVIGATION ==================== */
-    function showScreen(screenId) {
-        document.querySelectorAll('.choice-screen, .setup-screen, .lobby-screen, .game-screen').forEach(s => {
-            s.classList.add('hidden');
-        });
-        document.getElementById(screenId).classList.remove('hidden');
-    }
-
-    function showCreateScreen() {
-        // Generate random 4-digit code
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        document.getElementById('displayGameCode').textContent = code;
-        currentGameCode = code;
-        showScreen('createScreen');
-    }
-
-    function showJoinScreen() {
-        showScreen('joinScreen');
-    }
-
-    function backToChoice() {
-        showScreen('choiceScreen');
-    }
-
-    /* ==================== GAME CREATION ==================== */
-    function createGame() {
-        const name = document.getElementById('hostName').value.trim();
-        if (!name) {
-            alert('Please enter your name!');
-            return;
-        }
-
-        playerName = name;
-        currentPlayerId = 'player_' + Date.now();
-        isHost = true;
-
-        // Create game in Firebase
-        gameRef = database.ref('games/' + currentGameCode);
-        playersRef = gameRef.child('players');
-
-        gameRef.set({
-            code: currentGameCode,
-            hostId: currentPlayerId,
-            status: 'lobby',
-            createdAt: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => {
-            // Add host as first player
-            return playersRef.child(currentPlayerId).set({
-                name: playerName,
-                isHost: true,
-                joinedAt: firebase.database.ServerValue.TIMESTAMP
-            });
-        }).then(() => {
-            setupLobby();
-        }).catch(error => {
-            console.error("Error creating game:", error);
-            alert("Error creating game. Please try again.");
-        });
-    }
-
-    /* ==================== GAME JOINING ==================== */
-    function joinGame() {
-        const code = document.getElementById('joinCode').value.trim().toUpperCase();
-        const name = document.getElementById('playerName').value.trim();
-
-        if (!code || code.length !== 4) {
-            alert('Please enter a 4-digit game code!');
-            return;
-        }
-
-        if (!name) {
-            alert('Please enter your name!');
-            return;
-        }
-
-        currentGameCode = code;
-        playerName = name;
-        currentPlayerId = 'player_' + Date.now();
-        isHost = false;
-
-        // Check if game exists
-        gameRef = database.ref('games/' + currentGameCode);
-        playersRef = gameRef.child('players');
-
-        gameRef.once('value').then(snapshot => {
-            if (!snapshot.exists()) {
-                alert('Game not found! Check the code and try again.');
-                return;
-            }
-
-            const gameData = snapshot.val();
-            if (gameData.status !== 'lobby') {
-                alert('This game has already started!');
-                return;
-            }
-
-            // Add player to game
-            return playersRef.child(currentPlayerId).set({
-                name: playerName,
-                isHost: false,
-                joinedAt: firebase.database.ServerValue.TIMESTAMP
-            });
-        }).then(() => {
-            // Unlock audio immediately when joining
-            console.log('🎮 Joined game - unlocking audio...');
-            aggressiveAudioUnlock();
-            
-            setupLobby();
-        }).catch(error => {
-            console.error("Error joining game:", error);
-            alert("Error joining game. Please try again.");
-        });
-    }
-
-    /* ==================== LOBBY SETUP ==================== */
-    function setupLobby() {
-        document.getElementById('lobbyGameCode').textContent = currentGameCode;
-        
-        // Aggressive audio unlock while in lobby
-        console.log('📍 Entered lobby - unlocking audio...');
-        aggressiveAudioUnlock();
-        
-        const soundTip = document.getElementById('soundTip');
-        
-        if (isHost) {
-            document.getElementById('startGameBtn').classList.remove('hidden');
-            document.getElementById('waitingMessage').classList.add('hidden');
-            if (soundTip) soundTip.classList.remove('hidden');
-        } else {
-            document.getElementById('startGameBtn').classList.add('hidden');
-            document.getElementById('waitingMessage').classList.remove('hidden');
-            if (soundTip) soundTip.classList.add('hidden');
-        }
-
-        // Listen for player changes
-        playersRef.on('value', snapshot => {
-            const players = snapshot.val() || {};
-            updatePlayerList(players);
-            
-            // Try to unlock audio each time player list updates
-            aggressiveAudioUnlock();
-        });
-
-        // Listen for game status changes
-        gameRef.child('status').on('value', snapshot => {
-            const status = snapshot.val();
-            if (status === 'playing') {
-                loadGameScreen();
-            }
-        });
-
-        showScreen('lobbyScreen');
-    }
-
-    function updatePlayerList(players) {
-        const container = document.getElementById('playerListContainer');
-        const count = Object.keys(players).length;
-        document.getElementById('playerCount').textContent = count;
-
-        container.innerHTML = '';
-        Object.entries(players).forEach(([id, player]) => {
-            const div = document.createElement('div');
-            div.className = 'player-item' + (id === currentPlayerId ? ' you' : '');
-            div.textContent = player.name + (player.isHost ? ' 👑' : '') + (id === currentPlayerId ? ' (You)' : '');
-            container.appendChild(div);
-        });
-    }
-
-    function leaveGame() {
-        if (currentPlayerId && playersRef) {
-            playersRef.child(currentPlayerId).remove();
-        }
-        
-        // If host leaves, delete game
-        if (isHost && gameRef) {
-            gameRef.remove();
-        }
-
-        // Reset
-        currentGameCode = null;
-        currentPlayerId = null;
-        isHost = false;
-        
-        backToChoice();
-    }
-
-    /* ==================== START GAME ==================== */
-    function startGame() {
-        if (!isHost) return;
-
-        // Pre-load audio for host (this is a direct user action)
-        if (Object.keys(preloadedAudio).length === 0) {
-            console.log('🎵 Host: Pre-loading audio...');
-            preloadAllAudio();
-        }
-
-        // Generate tickets for all players
-        playersRef.once('value').then(snapshot => {
-            const players = snapshot.val();
-            const updates = {};
-
-            Object.keys(players).forEach(playerId => {
-                updates[`players/${playerId}/ticket`] = generateRandomTicketData();
-            });
-
-            // Initialize game state
-            updates['status'] = 'playing';
-            updates['availableNumbers'] = Array.from({length: 90}, (_, i) => i + 1);
-            updates['calledNumbers'] = [];
-            updates['startedAt'] = firebase.database.ServerValue.TIMESTAMP;
-
-            return gameRef.update(updates);
-        }).then(() => {
-            console.log("Game started!");
-        }).catch(error => {
-            console.error("Error starting game:", error);
-            alert("Error starting game. Please try again.");
-        });
-    }
-
-    /* ==================== GAME SCREEN ==================== */
-    function loadGameScreen() {
-        // Stop lobby music if it's playing
-        if (lobbyMusic) {
-            lobbyMusic.pause();
-            lobbyMusic.currentTime = 0;
-            console.log('🎵 Lobby music stopped - game starting!');
-        }
-        
-        showScreen('gameScreen');
-        
-        // Generate called numbers board
-        generateCalledNumbersBoard();
-        
-        // Get player's ticket
-        playersRef.child(currentPlayerId + '/ticket').once('value').then(snapshot => {
-            currentTicket = snapshot.val();
-            renderTicket(currentTicket);
-        });
-
-        // Listen for called numbers
-        gameRef.child('calledNumbers').on('value', snapshot => {
-            const called = snapshot.val() || [];
-            updateCalledNumbers(called);
-        });
-
-        // Listen for winner
-        gameRef.child('winner').on('value', snapshot => {
-            const winner = snapshot.val();
-            if (winner) {
-                announceWinner(winner);
-            }
-        });
-
-        // Start auto-caller if host
-        if (isHost) {
-            setTimeout(autoCallNumber, 2000);
-        }
-    }
-
-    function autoCallNumber() {
-        if (!isHost) return;
-
-        gameRef.child('availableNumbers').once('value').then(snapshot => {
-            const available = snapshot.val();
-            if (!available || available.length === 0) {
-                document.getElementById('statusMsg').textContent = "Game Over! All numbers called 🎰";
-                return;
-            }
-
-            // Pick random number
-            const randomIndex = Math.floor(Math.random() * available.length);
-            const number = available[randomIndex];
-
-            // Remove from available
-            available.splice(randomIndex, 1);
-
-            // Add to called
-            gameRef.child('calledNumbers').once('value').then(calledSnapshot => {
-                const called = calledSnapshot.val() || [];
-                called.unshift(number);
-
-                // Update database
-                return gameRef.update({
-                    availableNumbers: available,
-                    calledNumbers: called,
-                    currentNumber: number
-                });
-            }).then(() => {
-                // Play sound
-                playNumberSound(number);
-
-                // Schedule next call
-                gameRef.child('winner').once('value').then(winnerSnapshot => {
-                    if (!winnerSnapshot.exists()) {
-                        setTimeout(autoCallNumber, 2000);
-                    }
-                });
-            });
-        }).catch(error => {
-            console.error("Error calling number:", error);
-        });
-    }
-
-    /* ==================== CALLED NUMBERS BOARD ==================== */
-    function generateCalledNumbersBoard() {
-        const board = document.getElementById('calledNumbersBoard');
-        board.innerHTML = '';
-        
-        // Generate all 90 numbers
-        for (let i = 1; i <= 90; i++) {
-            const numberDiv = document.createElement('div');
-            numberDiv.className = 'called-number';
-            numberDiv.textContent = i;
-            numberDiv.dataset.number = i;
-            board.appendChild(numberDiv);
-        }
-    }
-
-    function updateCalledNumbersBoard(calledNumbers) {
-        // Highlight all called numbers
-        for (let i = 1; i <= 90; i++) {
-            const numberDiv = document.querySelector(`.called-number[data-number="${i}"]`);
-            if (numberDiv) {
+            const div = document.querySelector(`.called-number[data-number="${i}"]`);
+            if (div) {
                 if (calledNumbers.includes(i)) {
-                    numberDiv.classList.add('called');
+                    div.classList.add('called');
                 } else {
-                    numberDiv.classList.remove('called');
+                    div.classList.remove('called');
                 }
             }
         }
     }
 
-    function updateCalledNumbers(calledNumbers) {
-        const statusEl = document.getElementById('statusMsg');
-        if (calledNumbers.length === 0) {
-            statusEl.textContent = "Game starting...";
-            return;
-        }
-
-        const latest = calledNumbers[0];
-        const remaining = 90 - calledNumbers.length;
-        statusEl.textContent = `Called: ${latest} | ${remaining} remaining`;
-        
-        // Update the board
-        updateCalledNumbersBoard(calledNumbers);
-    }
-
     function announceWinner(winnerData) {
         const statusEl = document.getElementById('statusMsg');
+        statusEl.style.display = 'block';
         const isMe = winnerData.id === currentPlayerId;
         
         if (isMe) {
@@ -2175,34 +929,25 @@
             statusEl.textContent = `🎊 ${winnerData.name} wins the lollies! 🎊`;
             statusEl.classList.add('win');
             
-            // Play loss sound using pre-loaded audio
             const lossAudio = preloadedAudio['loss'];
             if (lossAudio) {
                 lossAudio.currentTime = 0;
-                lossAudio.volume = 1.0;
-                lossAudio.play().catch(err => console.log('Loss sound failed:', err));
-            } else {
-                // Fallback
-                const audio = new Audio('bingo/bingoloss.mp3');
-                audio.volume = 1.0;
-                audio.play().catch(err => console.log('Sound not found'));
+                lossAudio.play();
             }
         }
     }
 
-    /* ==================== TICKET RENDERING ==================== */
+    /* ==================== TICKET ==================== */
     function generateRandomTicketData() {
         const ticket = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
-        const numbersPerRow = 5;
         
         for (let col = 0; col < 9; col++) {
             const min = col === 0 ? 1 : col * 10;
             const max = col === 8 ? 90 : (col + 1) * 10 - 1;
-            const range = max - min + 1;
-            const available = Array.from({length: range}, (_, i) => min + i);
+            const available = [];
+            for (let n = min; n <= max; n++) available.push(n);
             
-            const numsInCol = Math.min(3, Math.max(1, Math.floor(Math.random() * 3) + 1));
-            const rows = [0, 1, 2].sort(() => Math.random() - 0.5).slice(0, numsInCol);
+            const rows = [0, 1, 2].sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 3) + 1);
             
             rows.forEach(row => {
                 const idx = Math.floor(Math.random() * available.length);
@@ -2213,27 +958,25 @@
         
         for (let row = 0; row < 3; row++) {
             const nonZero = ticket[row].filter(n => n !== 0);
-            if (nonZero.length < numbersPerRow) {
-                const needed = numbersPerRow - nonZero.length;
+            if (nonZero.length < 5) {
+                const needed = 5 - nonZero.length;
                 const zeroCols = ticket[row].map((val, idx) => val === 0 ? idx : -1).filter(i => i !== -1);
                 for (let i = 0; i < needed && zeroCols.length > 0; i++) {
-                    const colIdx = zeroCols[Math.floor(Math.random() * zeroCols.length)];
-                    const min = colIdx === 0 ? 1 : colIdx * 10;
-                    const max = colIdx === 8 ? 90 : (colIdx + 1) * 10 - 1;
-                    ticket[row][colIdx] = min + Math.floor(Math.random() * (max - min + 1));
-                    zeroCols.splice(zeroCols.indexOf(colIdx), 1);
+                    const col = zeroCols[Math.floor(Math.random() * zeroCols.length)];
+                    const min = col === 0 ? 1 : col * 10;
+                    const max = col === 8 ? 90 : (col + 1) * 10 - 1;
+                    ticket[row][col] = min + Math.floor(Math.random() * (max - min + 1));
+                    zeroCols.splice(zeroCols.indexOf(col), 1);
                 }
             }
         }
         
-        for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < 9; col++) {
+        for (let col = 0; col < 9; col++) {
+            const nums = [ticket[0][col], ticket[1][col], ticket[2][col]].filter(n => n !== 0).sort((a, b) => a - b);
+            let idx = 0;
+            for (let row = 0; row < 3; row++) {
                 if (ticket[row][col] !== 0) {
-                    for (let r2 = row + 1; r2 < 3; r2++) {
-                        if (ticket[r2][col] !== 0 && ticket[r2][col] < ticket[row][col]) {
-                            [ticket[row][col], ticket[r2][col]] = [ticket[r2][col], ticket[row][col]];
-                        }
-                    }
+                    ticket[row][col] = nums[idx++];
                 }
             }
         }
@@ -2247,9 +990,6 @@
         const grid = container.querySelector('.grid');
         
         for (let row = 0; row < 3; row++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'grid-row';
-            
             for (let col = 0; col < 9; col++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
@@ -2269,7 +1009,6 @@
     }
 
     function toggleMark(cell) {
-        // Allow marking any number
         cell.classList.toggle('marked');
         checkWin();
     }
@@ -2277,30 +1016,12 @@
     function checkWin() {
         if (!currentTicket) return;
 
-        const rows = document.querySelectorAll('.grid-row');
-        let completedLines = 0;
-
-        rows.forEach((row, index) => {
-            const cells = Array.from(row.querySelectorAll('.cell:not(.empty)'));
-            const markedCells = cells.filter(cell => cell.classList.contains('marked'));
-            
-            if (cells.length > 0 && cells.length === markedCells.length) {
-                completedLines++;
-                row.classList.add('winning');
-            } else {
-                row.classList.remove('winning');
-            }
-        });
-
         const allCells = Array.from(document.querySelectorAll('.cell:not(.empty)'));
         const allMarked = allCells.filter(cell => cell.classList.contains('marked'));
-        const isFullHouse = allCells.length === allMarked.length && allCells.length > 0;
-
-        if (isFullHouse) {
-            // Check if already has winner
+        
+        if (allCells.length === allMarked.length && allCells.length > 0) {
             gameRef.child('winner').once('value').then(snapshot => {
                 if (!snapshot.exists()) {
-                    // You won!
                     gameRef.update({
                         winner: {
                             id: currentPlayerId,
@@ -2309,151 +1030,6 @@
                         }
                     });
                 }
-            });
-        }
-    }
-
-    /* ==================== AUDIO ==================== */
-    let audioUnlocked = false;
-    let audioContext = null;
-    let unlockAttempts = 0;
-    let preloadedAudio = {}; // Store all audio files
-    let lobbyMusic = null; // Store lobby music separately
-
-    // Pre-load all audio files
-    function preloadAllAudio() {
-        console.log('🎵 Pre-loading all audio files...');
-        
-        // Load numbers 1-90
-        for (let i = 1; i <= 90; i++) {
-            const paddedNumber = i.toString().padStart(2, '0');
-            const audio = new Audio(`bingo/${paddedNumber}.mp3`);
-            audio.preload = 'auto';
-            audio.volume = 1.0;
-            preloadedAudio[i] = audio;
-        }
-        
-        // Load loss sound
-        const lossAudio = new Audio('bingo/bingoloss.mp3');
-        lossAudio.preload = 'auto';
-        lossAudio.volume = 1.0;
-        preloadedAudio['loss'] = lossAudio;
-        
-        // Load lobby/start music
-        lobbyMusic = new Audio('bingo/startmusic.mp3');
-        lobbyMusic.preload = 'auto';
-        lobbyMusic.volume = 0.7; // Slightly lower volume for background music
-        lobbyMusic.loop = true; // Loop while waiting
-        
-        console.log('✅ All audio files pre-loaded!');
-    }
-
-    // Player-specific audio unlock with lobby music
-    function unlockAudioForPlayer() {
-        console.log('🔊 Player tapped - unlocking audio with lobby music...');
-        
-        // AudioContext
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        } catch (e) {}
-        
-        // Pre-load all audio files NOW while we have user interaction
-        preloadAllAudio();
-        
-        // Play lobby music (looping)
-        if (lobbyMusic) {
-            lobbyMusic.play().then(() => {
-                console.log('✅ Audio unlocked! Lobby music playing.');
-                audioUnlocked = true;
-                
-                // Update waiting message to show success
-                const waitMsg = document.getElementById('waitingMessage');
-                if (waitMsg) {
-                    waitMsg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
-                    waitMsg.style.background = '#90EE90';
-                    waitMsg.style.cursor = 'default';
-                    waitMsg.onclick = null;
-                }
-            }).catch(err => {
-                console.log('❌ Audio still blocked:', err);
-                alert('Audio blocked!\n\nPlease:\n1. Turn volume UP\n2. Take phone off silent\n3. Try tapping again');
-            });
-        }
-    }
-
-    // Aggressive audio unlock
-    function aggressiveAudioUnlock() {
-        if (audioUnlocked) return true;
-        
-        unlockAttempts++;
-        console.log(`🔊 Audio unlock attempt #${unlockAttempts}`);
-        
-        // AudioContext
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        } catch (e) {}
-        
-        // Silent audio
-        const silentAudio = new Audio();
-        silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-        silentAudio.volume = 0.01;
-        
-        silentAudio.play().then(() => {
-            console.log('✅ Audio unlocked!');
-            audioUnlocked = true;
-        }).catch(() => {});
-        
-        return audioUnlocked;
-    }
-
-    // Try on every interaction
-    document.addEventListener('click', aggressiveAudioUnlock);
-    document.addEventListener('touchstart', aggressiveAudioUnlock);
-    document.addEventListener('touchend', aggressiveAudioUnlock);
-
-    function playNumberSound(number) {
-        console.log(`🎵 Playing number: ${number}`);
-        
-        // Use pre-loaded audio if available
-        const audio = preloadedAudio[number];
-        
-        if (audio) {
-            // Reset audio to start
-            audio.currentTime = 0;
-            audio.volume = 1.0;
-            
-            audio.play().then(() => {
-                console.log(`✅ Played: ${number}`);
-                audioUnlocked = true;
-            }).catch(err => {
-                console.log(`⚠️ Failed to play ${number}:`, err);
-                
-                // Fallback: try creating new audio
-                const fallbackAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
-                fallbackAudio.volume = 1.0;
-                fallbackAudio.play().catch(() => {
-                    console.log('Fallback also failed');
-                });
-            });
-        } else {
-            // No pre-loaded audio, create new (for host who doesn't tap button)
-            console.log('⚠️ No pre-loaded audio, creating new');
-            const newAudio = new Audio(`bingo/${number.toString().padStart(2, '0')}.mp3`);
-            newAudio.volume = 1.0;
-            newAudio.play().then(() => {
-                console.log(`✅ Played: ${number}`);
-            }).catch(err => {
-                console.log(`⚠️ Failed: ${err}`);
             });
         }
     }
