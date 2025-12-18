@@ -287,6 +287,57 @@
             50% { transform: scale(1.05); }
         }
 
+        /* Called Numbers Board */
+        .called-board {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 2px solid var(--primary);
+        }
+
+        .called-board h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .called-numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .called-number {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            color: #999;
+        }
+
+        .called-number.called {
+            background: var(--accent);
+            border-color: var(--primary);
+            color: var(--dark);
+            animation: numberCalled 0.3s ease-out;
+        }
+
+        @keyframes numberCalled {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         /* Ticket */
         .ticket-wrapper {
             display: flex;
@@ -298,9 +349,11 @@
             background: white;
             border: 3px solid var(--dark);
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
+            max-width: 600px;
+            width: 100%;
         }
 
         .ticket::before {
@@ -338,7 +391,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.6rem;
             font-weight: bold;
             background: white;
             border: 2px solid #ccc;
@@ -374,10 +427,14 @@
             h1 { font-size: 2rem; }
             .cell { font-size: 1.2rem; }
             .choice-btn, .btn { padding: 15px; font-size: 1.1rem; }
+            .called-number { font-size: 0.85rem; }
+            .ticket { padding: 10px; }
         }
 
         @media (max-width: 500px) {
             .cell { font-size: 1rem; }
+            .called-numbers-grid { gap: 4px; }
+            .called-number { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -441,8 +498,12 @@
             <div id="playerListContainer"></div>
         </div>
 
-        <div class="waiting-message hidden" id="waitingMessage">
-            ⏳ Waiting for host to start the game...
+        <div class="hidden" style="text-align: center; padding: 10px; background: #FFF8E7; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #666;" id="soundTip">
+            💡 Tell players to tap the yellow message for sound
+        </div>
+
+        <div class="waiting-message hidden" id="waitingMessage" onclick="unlockAudioForPlayer()" style="cursor: pointer;">
+            🔊 TAP HERE for sound • Waiting for host to start...
         </div>
 
         <button class="btn hidden" id="startGameBtn" onclick="startGame()">🚀 START GAME</button>
@@ -452,6 +513,15 @@
     <!-- Game Screen: Active gameplay -->
     <div class="game-screen hidden" id="gameScreen">
         <div class="status-msg" id="statusMsg">Get ready...</div>
+        
+        <!-- Called Numbers Board -->
+        <div class="called-board">
+            <h3>Numbers Called</h3>
+            <div class="called-numbers-grid" id="calledNumbersBoard">
+                <!-- Numbers 1-90 will be generated here -->
+            </div>
+        </div>
+        
         <div class="ticket-wrapper">
             <div class="ticket" id="ticketContainer"></div>
         </div>
@@ -616,12 +686,16 @@
         console.log('📍 Entered lobby - unlocking audio...');
         aggressiveAudioUnlock();
         
+        const soundTip = document.getElementById('soundTip');
+        
         if (isHost) {
             document.getElementById('startGameBtn').classList.remove('hidden');
             document.getElementById('waitingMessage').classList.add('hidden');
+            if (soundTip) soundTip.classList.remove('hidden');
         } else {
             document.getElementById('startGameBtn').classList.add('hidden');
             document.getElementById('waitingMessage').classList.remove('hidden');
+            if (soundTip) soundTip.classList.add('hidden');
         }
 
         // Listen for player changes
@@ -708,6 +782,9 @@
     function loadGameScreen() {
         showScreen('gameScreen');
         
+        // Generate called numbers board
+        generateCalledNumbersBoard();
+        
         // Get player's ticket
         playersRef.child(currentPlayerId + '/ticket').once('value').then(snapshot => {
             currentTicket = snapshot.val();
@@ -778,6 +855,35 @@
         });
     }
 
+    /* ==================== CALLED NUMBERS BOARD ==================== */
+    function generateCalledNumbersBoard() {
+        const board = document.getElementById('calledNumbersBoard');
+        board.innerHTML = '';
+        
+        // Generate all 90 numbers
+        for (let i = 1; i <= 90; i++) {
+            const numberDiv = document.createElement('div');
+            numberDiv.className = 'called-number';
+            numberDiv.textContent = i;
+            numberDiv.dataset.number = i;
+            board.appendChild(numberDiv);
+        }
+    }
+
+    function updateCalledNumbersBoard(calledNumbers) {
+        // Highlight all called numbers
+        for (let i = 1; i <= 90; i++) {
+            const numberDiv = document.querySelector(`.called-number[data-number="${i}"]`);
+            if (numberDiv) {
+                if (calledNumbers.includes(i)) {
+                    numberDiv.classList.add('called');
+                } else {
+                    numberDiv.classList.remove('called');
+                }
+            }
+        }
+    }
+
     function updateCalledNumbers(calledNumbers) {
         const statusEl = document.getElementById('statusMsg');
         if (calledNumbers.length === 0) {
@@ -788,6 +894,9 @@
         const latest = calledNumbers[0];
         const remaining = 90 - calledNumbers.length;
         statusEl.textContent = `Called: ${latest} | ${remaining} remaining`;
+        
+        // Update the board
+        updateCalledNumbersBoard(calledNumbers);
     }
 
     function announceWinner(winnerData) {
@@ -936,14 +1045,11 @@
     let audioContext = null;
     let unlockAttempts = 0;
 
-    // Aggressive audio unlock
-    function aggressiveAudioUnlock() {
-        if (audioUnlocked) return true;
+    // Player-specific audio unlock with test sound
+    function unlockAudioForPlayer() {
+        console.log('🔊 Player tapped - unlocking audio with test...');
         
-        unlockAttempts++;
-        console.log(`🔊 Audio unlock attempt #${unlockAttempts}`);
-        
-        // Method 1: AudioContext
+        // AudioContext
         try {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -953,7 +1059,45 @@
             }
         } catch (e) {}
         
-        // Method 2: Silent audio
+        // Play actual test sound
+        const testAudio = new Audio('bingo/01.mp3');
+        testAudio.volume = 0.5; // Medium volume for test
+        testAudio.play().then(() => {
+            console.log('✅ Audio unlocked! Test sound played.');
+            audioUnlocked = true;
+            
+            // Update waiting message to show success
+            const waitMsg = document.getElementById('waitingMessage');
+            if (waitMsg) {
+                waitMsg.textContent = '✅ Sound enabled • Waiting for host to start...';
+                waitMsg.style.background = '#90EE90';
+                waitMsg.style.cursor = 'default';
+                waitMsg.onclick = null;
+            }
+        }).catch(err => {
+            console.log('❌ Audio still blocked:', err);
+            alert('Audio blocked!\n\nPlease:\n1. Turn volume UP\n2. Take phone off silent\n3. Try tapping again');
+        });
+    }
+
+    // Aggressive audio unlock
+    function aggressiveAudioUnlock() {
+        if (audioUnlocked) return true;
+        
+        unlockAttempts++;
+        console.log(`🔊 Audio unlock attempt #${unlockAttempts}`);
+        
+        // AudioContext
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        } catch (e) {}
+        
+        // Silent audio
         const silentAudio = new Audio();
         silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
         silentAudio.volume = 0.01;
@@ -961,16 +1105,6 @@
         silentAudio.play().then(() => {
             console.log('✅ Audio unlocked!');
             audioUnlocked = true;
-            
-            // Quick test with real sound at low volume
-            setTimeout(() => {
-                const test = new Audio('bingo/01.mp3');
-                test.volume = 0.05;
-                test.play().then(() => {
-                    console.log('✅ Test successful!');
-                    test.pause();
-                }).catch(() => {});
-            }, 50);
         }).catch(() => {});
         
         return audioUnlocked;
@@ -991,7 +1125,6 @@
             audioUnlocked = true;
         }).catch(() => {
             console.log(`⚠️ ${paddedNumber}.mp3 blocked`);
-            aggressiveAudioUnlock();
         });
     }
 
