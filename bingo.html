@@ -51,7 +51,6 @@
             color: var(--dark);
         }
 
-        /* Choice Screen */
         .choice-screen {
             background: white;
             padding: 40px;
@@ -98,7 +97,6 @@
             color: var(--dark);
         }
 
-        /* Join/Create Screen */
         .setup-screen {
             background: white;
             padding: 40px;
@@ -195,7 +193,6 @@
             margin-top: 15px;
         }
 
-        /* Lobby Screen */
         .lobby-screen {
             background: white;
             padding: 30px;
@@ -257,7 +254,6 @@
             cursor: pointer;
         }
 
-        /* Game Screen */
         .game-screen {
             width: 100%;
             max-width: 800px;
@@ -288,7 +284,6 @@
             50% { transform: scale(1.05); }
         }
 
-        /* Called Numbers Board */
         .called-board {
             background: white;
             padding: 20px;
@@ -339,7 +334,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Ticket */
         .ticket-wrapper {
             display: flex;
             justify-content: center;
@@ -445,7 +439,6 @@
         <p class="subtitle">Multiplayer • Win a Bag of Lollies!</p>
     </header>
 
-    <!-- Choice Screen: Create or Join -->
     <div class="choice-screen" id="choiceScreen">
         <h2>Welcome!</h2>
         <div class="choice-buttons">
@@ -454,7 +447,6 @@
         </div>
     </div>
 
-    <!-- Create Game Screen -->
     <div class="setup-screen hidden" id="createScreen">
         <h2>Create New Game</h2>
         <div class="game-code-display">
@@ -469,7 +461,6 @@
         <button class="btn btn-secondary" onclick="backToChoice()">← Back</button>
     </div>
 
-    <!-- Join Game Screen -->
     <div class="setup-screen hidden" id="joinScreen">
         <h2>Join Game</h2>
         <div class="input-group">
@@ -484,7 +475,6 @@
         <button class="btn btn-secondary" onclick="backToChoice()">← Back</button>
     </div>
 
-    <!-- Lobby Screen: Waiting for players -->
     <div class="lobby-screen hidden" id="lobbyScreen">
         <div class="lobby-header">
             <h2>Game Lobby</h2>
@@ -507,9 +497,7 @@
         <button class="btn btn-secondary" onclick="leaveGame()">← Leave Game</button>
     </div>
 
-    <!-- Game Screen: Active gameplay -->
     <div class="game-screen hidden" id="gameScreen">
-        <!-- Status Bar -->
         <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
             <div style="background: white; padding: 15px 25px; border-radius: 10px; border: 3px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 150px;">
                 <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Prize:</div>
@@ -525,15 +513,11 @@
             </div>
         </div>
         
-        <!-- Winner Message -->
         <div class="status-msg" id="statusMsg" style="display: none;">Get ready...</div>
         
-        <!-- Called Numbers Board -->
         <div class="called-board">
             <h3>Numbers Called</h3>
-            <div class="called-numbers-grid" id="calledNumbersBoard">
-                <!-- Numbers 1-90 will be generated here -->
-            </div>
+            <div class="called-numbers-grid" id="calledNumbersBoard"></div>
         </div>
         
         <div class="ticket-wrapper">
@@ -541,13 +525,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-    /* ==================== FIREBASE CONFIG ==================== */
-    const firebaseConfig = {
+    firebase.initializeApp({
         apiKey: "AIzaSyD5pSXhDv9jzQNIYWhNRdOVt2VR2kWYr-4",
         authDomain: "tr4ces-treatz-bingo.firebaseapp.com",
         databaseURL: "https://tr4ces-treatz-bingo-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -555,12 +537,9 @@
         storageBucket: "tr4ces-treatz-bingo.firebasestorage.app",
         messagingSenderId: "755718258054",
         appId: "1:755718258054:web:5613f7a71581b1ac460007"
-    };
-
-    firebase.initializeApp(firebaseConfig);
+    });
     const database = firebase.database();
 
-    /* ==================== GAME STATE ==================== */
     let currentGameCode = null;
     let currentPlayerId = null;
     let playerName = '';
@@ -570,62 +549,60 @@
     let playersRef = null;
     let lastPlayedNumber = null;
 
-    /* ==================== AUDIO ==================== */
-    let preloadedAudio = {};
-    let lobbyMusic = null;
-
-    function preloadAllAudio() {
-        // Load numbers 1-90
-        for (let i = 1; i <= 90; i++) {
-            const audio = new Audio(`bingo/${String(i).padStart(2, '0')}.mp3`);
-            audio.preload = 'auto';
-            preloadedAudio[i] = audio;
-        }
-        
-        // Load loss sound
-        preloadedAudio['loss'] = new Audio('bingo/bingoloss.mp3');
-        preloadedAudio['loss'].preload = 'auto';
-        
-        // Load lobby music
-        lobbyMusic = new Audio('bingo/startmusic.mp3');
-        lobbyMusic.preload = 'auto';
-        lobbyMusic.volume = 0.7;
-        lobbyMusic.loop = true;
-        
-        console.log('✅ All audio pre-loaded');
-    }
+    /* ==================== AUDIO - SINGLE ELEMENT APPROACH ==================== */
+    let mainAudio = new Audio(); // ONE audio element for everything
+    let lobbyMusic = new Audio();
+    let audioUnlocked = false;
 
     function unlockAudio() {
-        console.log('🔊 Unlocking audio...');
+        console.log('🔊 UNLOCK: User tapped button');
         
-        preloadAllAudio();
+        // Play lobby music (this is the direct user action that unlocks audio)
+        lobbyMusic.src = 'bingo/startmusic.mp3';
+        lobbyMusic.loop = true;
+        lobbyMusic.volume = 0.7;
         
-        if (lobbyMusic) {
-            lobbyMusic.play().then(() => {
-                console.log('✅ Lobby music playing');
-                const msg = document.getElementById('waitingMessage');
-                if (msg) {
-                    msg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
-                    msg.style.background = '#90EE90';
-                    msg.onclick = null;
-                }
-            }).catch(err => {
-                console.log('❌ Audio blocked:', err);
-                alert('Audio blocked! Turn volume UP and take phone off silent, then try again.');
-            });
-        }
+        lobbyMusic.play().then(() => {
+            console.log('✅ UNLOCK: Lobby music playing - audio is NOW unlocked');
+            audioUnlocked = true;
+            
+            const msg = document.getElementById('waitingMessage');
+            if (msg) {
+                msg.textContent = '✅ Sound enabled • Music playing • Waiting for host...';
+                msg.style.background = '#90EE90';
+                msg.onclick = null;
+            }
+        }).catch(err => {
+            console.log('❌ UNLOCK FAILED:', err);
+            alert('Audio blocked!\n\n1. Turn volume UP\n2. Take phone OFF silent\n3. Try tapping again');
+        });
     }
 
     function playNumberSound(number) {
-        const audio = preloadedAudio[number];
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play().then(() => {
-                console.log(`✅ Played: ${number}`);
-            }).catch(err => {
-                console.log(`⚠️ Failed: ${number}`);
-            });
+        console.log(`🎵 PLAY: Attempting ${number}`);
+        
+        if (!audioUnlocked) {
+            console.log('⚠️ PLAY: Audio not unlocked yet!');
+            return;
         }
+        
+        // Use the SAME audio element, just change source
+        const paddedNumber = String(number).padStart(2, '0');
+        mainAudio.src = `bingo/${paddedNumber}.mp3`;
+        mainAudio.volume = 1.0;
+        
+        mainAudio.play().then(() => {
+            console.log(`✅ PLAY: ${number} SUCCESS`);
+        }).catch(err => {
+            console.log(`❌ PLAY: ${number} FAILED:`, err);
+        });
+    }
+
+    function playLossSound() {
+        if (!audioUnlocked) return;
+        mainAudio.src = 'bingo/bingoloss.mp3';
+        mainAudio.volume = 1.0;
+        mainAudio.play();
     }
 
     /* ==================== SCREEN NAVIGATION ==================== */
@@ -786,10 +763,9 @@
     function startGame() {
         if (!isHost) return;
 
-        // Pre-load audio for host
-        if (Object.keys(preloadedAudio).length === 0) {
-            preloadAllAudio();
-        }
+        // Host unlocks audio by clicking this button
+        audioUnlocked = true;
+        console.log('✅ HOST: Audio unlocked by START GAME click');
 
         playersRef.once('value').then(snapshot => {
             const players = snapshot.val();
@@ -815,6 +791,7 @@
         if (lobbyMusic) {
             lobbyMusic.pause();
             lobbyMusic.currentTime = 0;
+            console.log('🎵 Lobby music stopped');
         }
         
         showScreen('gameScreen');
@@ -897,9 +874,9 @@
         document.getElementById('lastCalledDisplay').textContent = latest;
         document.getElementById('remainingDisplay').textContent = remaining;
         
-        // Play sound for all players when new number detected
+        // CRITICAL: Play sound for joiners when new number detected
         if (latest !== lastPlayedNumber) {
-            console.log(`🎵 New number: ${latest}`);
+            console.log(`🔥 NEW NUMBER DETECTED: ${latest} - Playing for ALL players`);
             playNumberSound(latest);
             lastPlayedNumber = latest;
         }
@@ -928,12 +905,7 @@
         } else {
             statusEl.textContent = `🎊 ${winnerData.name} wins the lollies! 🎊`;
             statusEl.classList.add('win');
-            
-            const lossAudio = preloadedAudio['loss'];
-            if (lossAudio) {
-                lossAudio.currentTime = 0;
-                lossAudio.play();
-            }
+            playLossSound();
         }
     }
 
@@ -1034,7 +1006,6 @@
         }
     }
 
-    /* ==================== CLEANUP ==================== */
     window.addEventListener('beforeunload', () => {
         if (currentPlayerId && playersRef) {
             playersRef.child(currentPlayerId).remove();
