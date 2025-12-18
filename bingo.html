@@ -475,15 +475,15 @@
 
     <script>
     /* ==================== FIREBASE CONFIG ==================== */
-    // TODO: Replace with your Firebase config
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyD5pSXhDv9jzQNIYWhNRdOVt2VR2kWYr-4",
+        authDomain: "tr4ces-treatz-bingo.firebaseapp.com",
+        databaseURL: "https://tr4ces-treatz-bingo-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "tr4ces-treatz-bingo",
+        storageBucket: "tr4ces-treatz-bingo.firebasestorage.app",
+        messagingSenderId: "755718258054",
+        appId: "1:755718258054:web:5613f7a71581b1ac460007",
+        measurementId: "G-GL65FXCJC3"
     };
 
     // Initialize Firebase
@@ -491,10 +491,10 @@
     try {
         app = firebase.initializeApp(firebaseConfig);
         database = firebase.database();
-        console.log("Firebase initialized successfully");
+        console.log("✅ Firebase connected successfully!");
     } catch (error) {
-        console.error("Firebase initialization error:", error);
-        alert("Firebase setup required! See instructions in code.");
+        console.error("❌ Firebase initialization error:", error);
+        alert("Firebase connection failed! Check console for details.");
     }
 
     /* ==================== GAME STATE ==================== */
