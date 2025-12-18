@@ -354,18 +354,6 @@
             transform: scale(1.05);
         }
 
-        .cell.called:not(.marked) {
-            background: #ffffcc;
-            border-color: var(--accent);
-            cursor: pointer;
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
         .cell.empty {
             background: transparent;
             border: none;
@@ -464,6 +452,9 @@
     <!-- Game Screen: Active gameplay -->
     <div class="game-screen hidden" id="gameScreen">
         <div class="status-msg" id="statusMsg">Get ready...</div>
+        <div style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 10px;" id="audioHint">
+            🔊 Tap screen if you don't hear numbers
+        </div>
         <div class="ticket-wrapper">
             <div class="ticket" id="ticketContainer"></div>
         </div>
@@ -790,13 +781,11 @@
         const remaining = 90 - calledNumbers.length;
         statusEl.textContent = `Called: ${latest} | ${remaining} remaining`;
 
-        // Highlight called numbers on ticket
-        const cells = document.querySelectorAll('.cell');
-        cells.forEach(cell => {
-            if (cell.dataset.number && calledNumbers.includes(parseInt(cell.dataset.number))) {
-                cell.classList.add('called');
-            }
-        });
+        // Hide audio hint after a few numbers called
+        if (calledNumbers.length > 3) {
+            const audioHint = document.getElementById('audioHint');
+            if (audioHint) audioHint.style.display = 'none';
+        }
     }
 
     function announceWinner(winnerData) {
@@ -896,18 +885,9 @@
     }
 
     function toggleMark(cell) {
-        const number = parseInt(cell.dataset.number);
-        
-        // Check if number has been called
-        gameRef.child('calledNumbers').once('value').then(snapshot => {
-            const called = snapshot.val() || [];
-            if (!called.includes(number)) {
-                return; // Can't mark if not called
-            }
-            
-            cell.classList.toggle('marked');
-            checkWin();
-        });
+        // Allow marking any number
+        cell.classList.toggle('marked');
+        checkWin();
     }
 
     function checkWin() {
@@ -950,11 +930,38 @@
     }
 
     /* ==================== AUDIO ==================== */
+    let audioUnlocked = false;
+
+    // Unlock audio on first user interaction (for mobile browsers)
+    function unlockAudio() {
+        if (audioUnlocked) return;
+        
+        const silentAudio = new Audio();
+        silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        silentAudio.play().then(() => {
+            audioUnlocked = true;
+            console.log('🔊 Audio unlocked for mobile!');
+        }).catch(() => {
+            console.log('Audio still locked');
+        });
+    }
+
+    // Try to unlock audio on any click
+    document.addEventListener('click', unlockAudio, { once: false });
+    document.addEventListener('touchstart', unlockAudio, { once: false });
+
     function playNumberSound(number) {
         const paddedNumber = number.toString().padStart(2, '0');
         const audio = new Audio(`bingo/${paddedNumber}.mp3`);
         audio.volume = 1.0;
-        audio.play().catch(err => console.log(`Sound ${paddedNumber}.mp3 not found`));
+        
+        // For mobile: try to play even if not unlocked
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                console.log(`Sound ${paddedNumber}.mp3 - autoplay blocked (tap screen to enable)`);
+            });
+        }
     }
 
     /* ==================== CLEANUP ==================== */
