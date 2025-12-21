@@ -902,15 +902,8 @@
                 // Number has been called - allow marking/unmarking
                 cell.classList.toggle('marked');
                 checkWin();
-            } else {
-                // Number not called yet - show message
-                console.log(`⚠️ Number ${number} hasn't been called yet!`);
-                // Optional: Flash the cell to show it can't be marked
-                cell.style.background = '#ffcccc';
-                setTimeout(() => {
-                    cell.style.background = 'white';
-                }, 300);
             }
+            // If not called, do nothing (silent blocking)
         });
     }
 
