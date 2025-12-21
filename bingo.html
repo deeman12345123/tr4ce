@@ -742,6 +742,18 @@
         playersRef.child(currentPlayerId + '/ticket').once('value').then(snapshot => {
             currentTicket = snapshot.val();
             renderTicket(currentTicket);
+            
+            // Mark any numbers that were already called before we loaded
+            gameRef.child('calledNumbers').once('value').then(calledSnapshot => {
+                const calledNumbers = calledSnapshot.val() || [];
+                calledNumbers.forEach(number => {
+                    const cell = document.querySelector(`.cell[data-number="${number}"]`);
+                    if (cell && !cell.classList.contains('empty')) {
+                        cell.classList.add('marked');
+                        console.log(`✅ Pre-marked already called number: ${number}`);
+                    }
+                });
+            });
         });
 
         gameRef.child('calledNumbers').on('value', snapshot => {
@@ -808,6 +820,15 @@
             console.log(`🔥 NEW NUMBER DETECTED: ${latest} - Playing for ALL players`);
             playNumberSound(latest);
             lastPlayedNumber = latest;
+            
+            // AUTO-MARK: If this number is on player's ticket, mark it automatically
+            const cellWithNumber = document.querySelector(`.cell[data-number="${latest}"]`);
+            if (cellWithNumber && !cellWithNumber.classList.contains('empty')) {
+                cellWithNumber.classList.add('marked');
+                console.log(`✅ Auto-marked number ${latest}`);
+                // Check for win after auto-marking
+                checkWin();
+            }
         }
     }
 
@@ -898,8 +919,26 @@
     }
 
     function toggleMark(cell) {
-        cell.classList.toggle('marked');
-        checkWin();
+        const number = parseInt(cell.dataset.number);
+        
+        // Check if this number has been called
+        gameRef.child('calledNumbers').once('value').then(snapshot => {
+            const calledNumbers = snapshot.val() || [];
+            
+            if (calledNumbers.includes(number)) {
+                // Number has been called - allow marking/unmarking
+                cell.classList.toggle('marked');
+                checkWin();
+            } else {
+                // Number not called yet - show message
+                console.log(`⚠️ Number ${number} hasn't been called yet!`);
+                // Optional: Flash the cell to show it can't be marked
+                cell.style.background = '#ffcccc';
+                setTimeout(() => {
+                    cell.style.background = 'white';
+                }, 300);
+            }
+        });
     }
 
     function checkWin() {
@@ -908,17 +947,36 @@
         const allCells = Array.from(document.querySelectorAll('.cell:not(.empty)'));
         const allMarked = allCells.filter(cell => cell.classList.contains('marked'));
         
+        // Check if all numbers are marked (Full House)
         if (allCells.length === allMarked.length && allCells.length > 0) {
-            gameRef.child('winner').once('value').then(snapshot => {
-                if (!snapshot.exists()) {
-                    gameRef.update({
-                        winner: {
-                            id: currentPlayerId,
-                            name: playerName,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        }
-                    });
+            // CRITICAL: Verify all marked numbers were actually called
+            gameRef.child('calledNumbers').once('value').then(snapshot => {
+                const calledNumbers = snapshot.val() || [];
+                
+                // Get all marked numbers
+                const markedNumbers = allMarked.map(cell => parseInt(cell.dataset.number));
+                
+                // Check if ALL marked numbers have been called
+                const allCalled = markedNumbers.every(num => calledNumbers.includes(num));
+                
+                if (!allCalled) {
+                    console.log('⚠️ CHEAT DETECTED: Marked numbers that were not called!');
+                    return; // Don't allow win
                 }
+                
+                // Check if already has winner
+                gameRef.child('winner').once('value').then(winnerSnapshot => {
+                    if (!winnerSnapshot.exists()) {
+                        // Legitimate win!
+                        gameRef.update({
+                            winner: {
+                                id: currentPlayerId,
+                                name: playerName,
+                                timestamp: firebase.database.ServerValue.TIMESTAMP
+                            }
+                        });
+                    }
+                });
             });
         }
     }
